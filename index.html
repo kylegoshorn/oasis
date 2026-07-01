@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE OASIS — Noblesville East Middle School</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0A0A0F;
+    --navy: #0D0D1A;
+    --card: #12121F;
+    --card2: #1A1A2E;
+    --gold: #FFD700;
+    --gold-dim: #B8960C;
+    --gold-glow: rgba(255,215,0,0.15);
+    --cyan: #00F5FF;
+    --cyan-glow: rgba(0,245,255,0.12);
+    --purple: #7B2FFF;
+    --purple-glow: rgba(123,47,255,0.15);
+    --green: #00FF88;
+    --white: #F0F0F0;
+    --muted: #6B7280;
+    --border: rgba(255,215,0,0.18);
+    --border-cyan: rgba(0,245,255,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ── SCANLINE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.03) 2px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  }
+
+  .nav-logo span { color: var(--cyan); }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-cta {
+    background: var(--gold);
+    color: var(--black);
+    padding: 0.4rem 1.2rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    transition: all 0.2s;
+  }
+
+  .nav-cta:hover {
+    background: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,245,255,0.4);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 0%, rgba(123,47,255,0.2) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(0,245,255,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 60%, rgba(255,215,0,0.08) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  }
+
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--cyan);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    line-height: 0.9;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  .hero-title .the {
+    display: block;
+    font-size: 0.3em;
+    color: var(--muted);
+    letter-spacing: 0.6em;
+    margin-bottom: 0.3em;
+  }
+
+  .hero-title .oasis-text {
+    display: block;
+    color: var(--gold);
+    text-shadow:
+      0 0 40px rgba(255,215,0,0.6),
+      0 0 80px rgba(255,215,0,0.3),
+      0 0 120px rgba(255,215,0,0.15);
+    animation: flicker 8s infinite;
+  }
+
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.85; }
+    97% { opacity: 1; }
+    98% { opacity: 0.9; }
+    99% { opacity: 1; }
+  }
+
+  .hero-sub {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(0.7rem, 2vw, 0.9rem);
+    color: var(--muted);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-sub span { color: var(--gold); }
+
+  .hero-quote {
+    font-size: 0.95rem;
+    color: rgba(240,240,240,0.5);
+    font-style: italic;
+    margin-bottom: 3rem;
+    max-width: 500px;
+    line-height: 1.6;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 5;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--black);
+    padding: 0.9rem 2.5rem;
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 0 30px rgba(255,215,0,0.3);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 50px rgba(255,215,0,0.5);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--cyan);
+    padding: 0.9rem 2.5rem;
+    border-radius: 4px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--border-cyan);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .btn-secondary:hover {
+    background: var(--cyan-glow);
+    box-shadow: 0 0 30px rgba(0,245,255,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* ── SEASON TICKER ── */
+  .season-bar {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .season-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+  }
+
+  .season-stat-label { color: var(--muted); letter-spacing: 0.1em; }
+  .season-stat-value { color: var(--gold); font-weight: 600; }
+  .season-stat-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ── SECTION LAYOUT ── */
+  section { padding: 5rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    color: var(--white);
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .section-title span { color: var(--gold); }
+
+  .section-desc {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 560px;
+  }
+
+  /* ── WORLDS ── */
+  .worlds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .world-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+    cursor: default;
+  }
+
+  .world-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .world-card:hover {
+    border-color: rgba(255,215,0,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(255,215,0,0.08);
+  }
+
+  .world-card:hover::before { opacity: 1; }
+
+  .world-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.75rem;
+  }
+
+  .world-icon {
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .world-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.4rem;
+  }
+
+  .world-desc {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── KEYS ── */
+  .keys-section { background: var(--navy); }
+
+  .keys-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .key-card {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border: 1px solid transparent;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .key-card.copper { border-color: rgba(184,115,51,0.3); }
+  .key-card.jade { border-color: rgba(0,168,107,0.3); }
+  .key-card.crystal { border-color: rgba(0,245,255,0.3); }
+
+  .key-card:hover { transform: translateY(-4px); }
+  .key-card.copper:hover { box-shadow: 0 12px 40px rgba(184,115,51,0.15); }
+  .key-card.jade:hover { box-shadow: 0 12px 40px rgba(0,168,107,0.15); }
+  .key-card.crystal:hover { box-shadow: 0 12px 40px rgba(0,245,255,0.15); }
+
+  .key-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    display: block;
+    filter: drop-shadow(0 0 15px currentColor);
+  }
+
+  .key-card.copper .key-icon { color: #B87333; }
+  .key-card.jade .key-icon { color: #00A86B; }
+  .key-card.crystal .key-icon { color: var(--cyan); }
+
+  .key-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .key-card.copper .key-name { color: #B87333; }
+  .key-card.jade .key-name { color: #00A86B; }
+  .key-card.crystal .key-name { color: var(--cyan); }
+
+  .key-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ── LEADERBOARD PREVIEW ── */
+  .leaderboard-preview {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 3rem;
+  }
+
+  .lb-header {
+    background: var(--card2);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .lb-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .lb-season {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .lb-row {
+    display: grid;
+    grid-template-columns: 40px 48px 1fr auto auto auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.2s;
+  }
+
+  .lb-row:hover { background: rgba(255,215,0,0.03); }
+  .lb-row:last-child { border-bottom: none; }
+
+  .lb-rank {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .lb-rank.top { color: var(--gold); font-weight: 700; }
+
+  .lb-avatar {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    border: 1px solid var(--border);
+  }
+
+  .lb-info { min-width: 0; }
+
+  .lb-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.05em;
+  }
+
+  .lb-spec {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 0.1rem;
+  }
+
+  .lb-keys { display: flex; gap: 0.25rem; }
+
+  .lb-key {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+  }
+
+  .lb-key.c { background: rgba(184,115,51,0.2); color: #B87333; }
+  .lb-key.j { background: rgba(0,168,107,0.2); color: #00A86B; }
+  .lb-key.x { background: rgba(0,245,255,0.2); color: var(--cyan); }
+  .lb-key.empty { background: rgba(255,255,255,0.05); color: transparent; }
+
+  .lb-xp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gold);
+    font-weight: 600;
+    text-align: right;
+  }
+
+  .lb-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: right;
+  }
+
+  /* ── WEEKLY AWARDS ── */
+  .awards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .award-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    transition: all 0.25s;
+  }
+
+  .award-card:hover {
+    border-color: rgba(255,215,0,0.3);
+    transform: translateY(-2px);
+  }
+
+  .award-emoji { font-size: 1.8rem; flex-shrink: 0; }
+
+  .award-body {}
+
+  .award-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+
+  .award-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    line-height: 1.5;
+    margin-bottom: 0.4rem;
+  }
+
+  .award-reward {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--green);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── QUOTE SECTION ── */
+  .quote-section {
+    background: var(--navy);
+    text-align: center;
+    padding: 5rem 2rem;
+  }
+
+  .big-quote {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1.2rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.4;
+    max-width: 700px;
+    margin: 0 auto 1.5rem;
+    text-shadow: 0 0 30px rgba(255,215,0,0.3);
+  }
+
+  .big-quote-2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    font-weight: 600;
+    color: var(--cyan);
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.85;
+    text-shadow: 0 0 20px rgba(0,245,255,0.3);
+  }
+
+  /* ── CLASS COMPETITION ── */
+  .comp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .comp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .comp-card.winner {
+    border-color: rgba(255,215,0,0.5);
+    background: linear-gradient(135deg, var(--card) 0%, rgba(255,215,0,0.05) 100%);
+  }
+
+  .comp-crown {
+    position: absolute;
+    top: 0.75rem; right: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .comp-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .comp-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  .comp-stat {
+    margin-bottom: 0.75rem;
+  }
+
+  .comp-stat-label {
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+  }
+
+  .comp-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0.3rem 0;
+  }
+
+  .comp-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--gold);
+    transition: width 1s ease;
+  }
+
+  .comp-bar-fill.cyan { background: var(--cyan); }
+
+  .comp-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── ENTER OASIS CTA ── */
+  .enter-section {
+    text-align: center;
+    padding: 6rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .enter-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(255,215,0,0.06) 0%, transparent 70%);
+  }
+
+  .enter-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 6vw, 4rem);
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 50px rgba(255,215,0,0.4);
+  }
+
+  .enter-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--navy);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .footer-logo {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 0.5rem;
+  }
+
+  .footer-sub {
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  /* ── STUDENT DASHBOARD MODAL ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 800;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { color: var(--white); border-color: var(--gold); }
+
+  .dash-header {
+    padding: 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: var(--card2);
+    border-radius: 12px 12px 0 0;
+  }
+
+  .dash-avatar {
+    width: 72px; height: 72px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(123,47,255,0.2));
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    box-shadow: 0 0 20px rgba(255,215,0,0.2);
+    flex-shrink: 0;
+  }
+
+  .dash-info { flex: 1; }
+
+  .dash-tag {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--white);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .dash-spec {
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .dash-keys-row { display: flex; gap: 0.5rem; align-items: center; }
+
+  .dash-key-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .dash-key-badge.copper { background: rgba(184,115,51,0.2); color: #B87333; border: 1px solid rgba(184,115,51,0.3); }
+  .dash-key-badge.jade { background: rgba(0,168,107,0.2); color: #00A86B; border: 1px solid rgba(0,168,107,0.3); }
+  .dash-key-badge.crystal-locked { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid rgba(255,255,255,0.08); }
+
+  .dash-xp-block { text-align: right; flex-shrink: 0; }
+
+  .dash-xp-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+    text-shadow: 0 0 20px rgba(255,215,0,0.4);
+  }
+
+  .dash-xp-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  .dash-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    margin-top: 0.3rem;
+    letter-spacing: 0.1em;
+  }
+
+  .dash-body { padding: 1.5rem 2rem; }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .dash-panel {
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+
+  .dash-panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .skill-name {
+    font-size: 0.75rem;
+    color: var(--white);
+    width: 120px;
+    flex-shrink: 0;
+  }
+
+  .skill-bar {
+    flex: 1;
+    height: 5px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--cyan));
+  }
+
+  .skill-pct {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    width: 32px;
+    text-align: right;
+  }
+
+  .boss-battle-preview {
+    background: linear-gradient(135deg, rgba(123,47,255,0.1), rgba(255,215,0,0.05));
+    border: 1px solid rgba(123,47,255,0.3);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .bb-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--purple);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .bb-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  .bb-readiness {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .bb-pct {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .bb-bar-wrap { flex: 1; }
+
+  .bb-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .bb-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .bb-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--purple), var(--gold));
+    width: 78%;
+  }
+
+  .bb-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: #FFB347;
+    margin-top: 0.4rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── AVATAR CREATOR ── */
+  .avatar-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    backdrop-filter: blur(12px);
+    z-index: 950;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .avatar-modal.open { display: flex; }
+
+  .avatar-builder {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .ab-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--card2);
+    border-radius: 12px 12px 0 0;
+  }
+
+  .ab-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.25rem;
+  }
+
+  .ab-sub {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .ab-body {
+    padding: 1.5rem 2rem;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 2rem;
+  }
+
+  .ab-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* ── AVATAR CARD ── */
+  .ab-card {
+    width: 160px;
+    border-radius: 14px;
+    background: linear-gradient(160deg, #1A1A2E 0%, #0D0D1A 100%);
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 30px rgba(255,215,0,0.25), 0 0 60px rgba(255,215,0,0.1);
+    overflow: hidden;
+    position: relative;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    flex-shrink: 0;
+  }
+
+  .ab-card-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(255,215,0,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    transition: background 0.3s;
+  }
+
+  .ab-card-top {
+    background: var(--gold);
+    padding: 0.3rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.3s;
+  }
+
+  .ab-card-class {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.5rem;
+    font-weight: 700;
+    color: var(--black);
+    letter-spacing: 0.15em;
+  }
+
+  .ab-card-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 0 0.5rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  #avatarCanvas {
+    border-radius: 8px;
+    image-rendering: pixelated;
+  }
+
+  .ab-card-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    color: var(--white);
+    text-align: center;
+    letter-spacing: 0.08em;
+    padding: 0 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ab-card-spec {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--gold);
+    text-align: center;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.5rem 0.5rem;
+    transition: color 0.3s;
+  }
+
+  .ab-card-bottom {
+    background: rgba(0,0,0,0.3);
+    padding: 0.3rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ab-card-id, .ab-card-season {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.45rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+
+  .ab-avatar-display {
+    display: none;
+  }
+
+  .ab-string {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-align: center;
+    word-break: break-all;
+    background: var(--black);
+    padding: 0.5rem;
+    border-radius: 4px;
+    width: 100%;
+  }
+
+  .ab-options { }
+
+  .ab-section { margin-bottom: 1.25rem; }
+
+  .ab-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .ab-choices {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .ab-choice {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+  }
+
+  .ab-choice:hover, .ab-choice.selected {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.08);
+    transform: scale(1.08);
+  }
+
+  .ab-color-choice {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .ab-color-choice:hover, .ab-color-choice.selected {
+    border-color: var(--white);
+    transform: scale(1.15);
+  }
+
+  .ab-input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .ab-input-group { }
+
+  .ab-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .ab-input {
+    width: 100%;
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    color: var(--white);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .ab-input:focus { border-color: var(--gold); }
+  .ab-input::placeholder { color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; }
+
+  .ab-select {
+    width: 100%;
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    outline: none;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+
+  .ab-select:focus { border-color: var(--gold); }
+
+  .ab-footer {
+    padding: 1.25rem 2rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .ab-cancel {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .ab-cancel:hover { border-color: var(--muted); color: var(--white); }
+
+  .ab-submit {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 0.7rem 2rem;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 0 20px rgba(255,215,0,0.3);
+  }
+
+  .ab-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0 30px rgba(255,215,0,0.5);
+  }
+
+  .gender-toggle {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .gender-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: var(--black);
+    color: var(--muted);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .gender-btn.active {
+    background: var(--gold);
+    color: var(--black);
+    border-color: var(--gold);
+  }
+
+  .gender-btn:hover:not(.active) {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  /* ── DASH LOOKUP GATE ── */
+  .dash-lookup {
+    padding: 3rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .dash-lookup-inner {
+    text-align: center;
+    max-width: 360px;
+  }
+
+  .dash-lookup-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .dash-lookup-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
+  }
+
+  .dash-lookup-sub {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .dash-lookup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .dash-lookup-error {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: #FF4757;
+    min-height: 1.2em;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── NAV TABS ── */
+  .nav-tab {
+    color: var(--muted) !important;
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    padding-bottom: 0.2rem;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .nav-tab:hover { color: var(--white) !important; }
+  .nav-tab.active { color: var(--gold) !important; border-bottom-color: var(--gold); }
+
+  /* ── HERO STRIP ── */
+  .hero-strip {
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-strip-bg {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 80% at 50% 0%, rgba(123,47,255,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 80%, rgba(0,245,255,0.08) 0%, transparent 60%);
+  }
+
+  .hero-strip-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+  }
+
+  .hero-strip-content { position: relative; z-index: 5; }
+
+  /* ── PAGE PANELS ── */
+  .page-tabs { min-height: 60vh; }
+  .page-panel { display: none; }
+  .page-panel.active { display: block; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    .keys-grid { grid-template-columns: 1fr; }
+    .dash-grid { grid-template-columns: 1fr; }
+    .ab-body { grid-template-columns: 1fr; }
+    .ab-input-row { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .lb-row { grid-template-columns: 30px 36px 1fr auto; }
+    .lb-keys, .lb-period { display: none; }
+    #dashContent > div { grid-template-columns: 1fr !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">THE <span>OASIS</span></div>
+  <ul class="nav-links" id="navTabs">
+    <li><a href="#" class="nav-tab active" data-tab="home" onclick="switchPageTab('home'); return false;">Home</a></li>
+    <li><a href="#" class="nav-tab" data-tab="worlds" onclick="switchPageTab('worlds'); return false;">Worlds</a></li>
+    <li><a href="#" class="nav-tab" data-tab="leaderboard" onclick="switchPageTab('leaderboard'); return false;">Leaderboard</a></li>
+    <li><a href="#" class="nav-tab" data-tab="classes" onclick="switchPageTab('classes'); return false;">Classes</a></li>
+    <li><a href="#" class="nav-tab" data-tab="awards" onclick="switchPageTab('awards'); return false;">Awards</a></li>
+    <li><a href="#" class="nav-tab" data-tab="keys" onclick="switchPageTab('keys'); return false;">Keys</a></li>
+  </ul>
+  <a href="#" class="nav-cta" onclick="openDash(); return false;">Enter OASIS</a>
+</nav>
+
+<!-- HERO STRIP (always visible) -->
+<div class="hero-strip">
+  <div class="hero-strip-bg"></div>
+  <div class="hero-strip-grid"></div>
+  <div class="hero-strip-content">
+    <div>
+      <p class="hero-eyebrow" style="margin-bottom:0.3rem;">// Noblesville East Middle School — Computer Science</p>
+      <h1 class="hero-title" style="font-size:clamp(2rem,6vw,3.5rem);margin-bottom:0.5rem;">
+        <span class="the" style="font-size:0.35em;">THE</span>
+        <span class="oasis-text">OASIS</span>
+      </h1>
+      <p class="hero-sub" style="margin-bottom:1rem;">Season 1 — <span>Fall 2026</span> — The Millers</p>
+      <div class="hero-buttons">
+        <a href="#" class="btn-primary" onclick="openAvatar(); return false;">🆕 Create Identity</a>
+        <a href="#" class="btn-secondary" onclick="openDash(); return false;">🔐 Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SEASON BAR -->
+<div class="season-bar">
+  <div class="season-stat">
+    <div class="season-stat-dot"></div>
+    <span class="season-stat-label">STATUS</span>
+    <span class="season-stat-value">SEASON ACTIVE</span>
+  </div>
+  <div class="season-stat">
+    <span class="season-stat-label">WEEK</span>
+    <span class="season-stat-value" id="statWeek">4 / 9</span>
+  </div>
+  <div class="season-stat">
+    <span class="season-stat-label">QUESTERS</span>
+    <span class="season-stat-value" id="statQuesters">—</span>
+  </div>
+  <div class="season-stat">
+    <span class="season-stat-label">CURRENT WORLD</span>
+    <span class="season-stat-value">WORLD 2</span>
+  </div>
+  <div class="season-stat">
+    <span class="season-stat-label">NEXT BOSS BATTLE</span>
+    <span class="season-stat-value">WEEK 5</span>
+  </div>
+</div>
+
+<!-- PAGE TABS CONTENT -->
+<div class="page-tabs">
+
+  <!-- ── HOME TAB ── -->
+  <div class="page-panel active" id="panel-home">
+
+    <!-- ANNOUNCEMENTS -->
+    <section style="padding:3rem 2rem 1.5rem;">
+      <div class="container">
+        <p class="section-eyebrow">// From Your Teacher</p>
+        <h2 class="section-title">📢 <span>Announcements</span></h2>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem 2rem;margin-top:1.5rem;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--cyan);letter-spacing:0.15em;margin-bottom:0.5rem;">// LATEST</p>
+          <p style="font-size:0.95rem;color:var(--white);line-height:1.7;" id="announcementText">Welcome to THE OASIS! Create your identity to get started. Boss Battle for World 1 is coming up — make sure your skills are ready.</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);margin-top:0.75rem;" id="announcementDate">// Posted: Fall 2026 Season Open</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEEKLY CHAMPION -->
+    <section style="padding:1.5rem 2rem;">
+      <div class="container">
+        <p class="section-eyebrow">// This Week's Winner</p>
+        <h2 class="section-title">👑 Weekly <span>Champion</span></h2>
+        <div id="weeklyChampion" style="margin-top:1.5rem;">
+          <div style="background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(123,47,255,0.08));border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:2rem;text-align:center;">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Class competition data will appear here each Friday</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEEKLY AWARD WINNERS -->
+    <section style="padding:1.5rem 2rem 3rem;">
+      <div class="container">
+        <p class="section-eyebrow">// Friday Recognition</p>
+        <h2 class="section-title">🏆 This Week's <span>Award Winners</span></h2>
+        <div id="weeklyWinners" style="margin-top:1.5rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0.75rem;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center;grid-column:1/-1;">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Award winners will appear here after Friday</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUOTE -->
+    <div class="quote-section">
+      <p class="big-quote">"The OASIS has no limits."</p>
+      <p class="big-quote-2">"Neither do you."</p>
+    </div>
+
+  </div>
+
+  <!-- ── WORLDS TAB ── -->
+  <div class="page-panel" id="panel-worlds">
+    <section style="padding:3rem 2rem;">
+      <div class="container">
+        <p class="section-eyebrow">// Season Map</p>
+        <h2 class="section-title">The <span>Worlds</span></h2>
+        <p class="section-desc">Five worlds stand between you and Crystal Key mastery. Each world unlocks new skills and ends with a Boss Battle.</p>
+        <div class="worlds-grid">
+          <div class="world-card">
+            <p class="world-num">WORLD 01</p>
+            <span class="world-icon">🛡️</span>
+            <p class="world-name">Digital Citizenship</p>
+            <p class="world-desc">Navigate the digital world with integrity. Learn online safety, ethics, and responsibility.</p>
+          </div>
+          <div class="world-card">
+            <p class="world-num">WORLD 02</p>
+            <span class="world-icon">⚡</span>
+            <p class="world-name">Productivity Tools</p>
+            <p class="world-desc">Master the tools professionals use. Docs, Sheets, Slides, and workflows that get things done.</p>
+          </div>
+          <div class="world-card">
+            <p class="world-num">WORLD 03</p>
+            <span class="world-icon">🌐</span>
+            <p class="world-name">Web Design</p>
+            <p class="world-desc">Build your first corner of the internet. HTML, CSS, and the art of making things look great.</p>
+          </div>
+          <div class="world-card">
+            <p class="world-num">WORLD 04</p>
+            <span class="world-icon">💻</span>
+            <p class="world-name">Programming</p>
+            <p class="world-desc">Learn to speak the language of machines. Variables, loops, conditions, and logic.</p>
+          </div>
+          <div class="world-card">
+            <p class="world-num">WORLD 05</p>
+            <span class="world-icon">🚀</span>
+            <p class="world-name">Innovation Project</p>
+            <p class="world-desc">Build something that matters. Your final project, your vision, your legacy in the OASIS.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── LEADERBOARD TAB ── -->
+  <div class="page-panel" id="panel-leaderboard">
+    <section style="padding:3rem 2rem;">
+      <div class="container">
+        <p class="section-eyebrow">// Live Rankings</p>
+        <h2 class="section-title">OASIS <span>Leaderboard</span></h2>
+        <p class="section-desc">Updated every Friday. Your GamerTag. Your XP. Your rank.</p>
+        <div class="leaderboard-preview">
+          <div class="lb-header">
+            <span class="lb-title">⚡ Top Questers</span>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.2rem;">
+              <span class="lb-season" id="lbSeason">Fall 2026 Season</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);" id="lbLastUpdated">// Last updated: —</span>
+            </div>
+          </div>
+          <div id="lbBody">
+            <div class="lb-row" style="justify-content:center;padding:2rem;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// Loading OASIS data...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── CLASSES TAB ── -->
+  <div class="page-panel" id="panel-classes">
+    <section style="padding:3rem 2rem;">
+      <div class="container">
+        <p class="section-eyebrow">// Weekly Class Battle</p>
+        <h2 class="section-title">Class <span>Competition</span></h2>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;">
+          <p class="section-desc" style="margin-bottom:0;">Every Friday the numbers update. Every class is fighting for the top spot.</p>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);" id="compLastUpdated">// Last updated: —</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);margin-bottom:1rem;">
+          // Score = (Avg XP × 0.6) + (Completion Rate × 0.4)
+        </div>
+        <div class="comp-grid" id="compGrid">
+          <div style="grid-column:1/-1;text-align:center;padding:2rem;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// Loading class data...</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── AWARDS TAB ── -->
+  <div class="page-panel" id="panel-awards">
+    <section style="padding:3rem 2rem;">
+      <div class="container">
+        <p class="section-eyebrow">// Friday Recognition</p>
+        <h2 class="section-title">Weekly <span>Awards</span></h2>
+        <p class="section-desc">Six awards. Every Friday. Each one recognizes something different — because great CS students come in every form.</p>
+        <div class="awards-grid">
+          <div class="award-card">
+            <span class="award-emoji">🔨</span>
+            <div class="award-body">
+              <p class="award-title">Builder of the Week</p>
+              <p class="award-desc">Outstanding project work. You built something real and built it well.</p>
+              <p class="award-reward">+ Choose seat first · +50 XP · Homepage spotlight</p>
+            </div>
+          </div>
+          <div class="award-card">
+            <span class="award-emoji">🐛</span>
+            <div class="award-body">
+              <p class="award-title">Debugger of the Week</p>
+              <p class="award-desc">Persistence in the face of bugs. You didn't quit. You fixed it.</p>
+              <p class="award-reward">+ Skip one bellringer · +50 XP · Homepage spotlight</p>
+            </div>
+          </div>
+          <div class="award-card">
+            <span class="award-emoji">🧭</span>
+            <div class="award-body">
+              <p class="award-title">Explorer of the Week</p>
+              <p class="award-desc">Most improved quester this week. Growth is the goal.</p>
+              <p class="award-reward">+ Bonus free-code time · +50 XP · Homepage spotlight</p>
+            </div>
+          </div>
+          <div class="award-card">
+            <span class="award-emoji">🏗️</span>
+            <div class="award-body">
+              <p class="award-title">Architect of the Week</p>
+              <p class="award-desc">Outstanding teamwork. You made everyone around you better.</p>
+              <p class="award-reward">+ Choose project partner · +50 XP · Homepage spotlight</p>
+            </div>
+          </div>
+          <div class="award-card">
+            <span class="award-emoji">💡</span>
+            <div class="award-body">
+              <p class="award-title">Innovator of the Week</p>
+              <p class="award-desc">The most creative solution in the OASIS this week.</p>
+              <p class="award-reward">+ Project featured on site · +50 XP · Homepage spotlight</p>
+            </div>
+          </div>
+          <div class="award-card">
+            <span class="award-emoji">🛡️</span>
+            <div class="award-body">
+              <p class="award-title">Guardian of the OASIS</p>
+              <p class="award-desc">Positive culture. Helping others. Integrity. Respect. A true Guardian makes the OASIS better for everyone.</p>
+              <p class="award-reward">+ Teacher privilege pass · +50 XP · Homepage spotlight</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── KEYS TAB ── -->
+  <div class="page-panel" id="panel-keys">
+    <section style="padding:3rem 2rem;">
+      <div class="container">
+        <p class="section-eyebrow">// Season Milestones</p>
+        <h2 class="section-title">The Three <span>Keys</span></h2>
+        <p class="section-desc">Keys are rare. Keys are earned. Only those who truly master the OASIS will hold all three.</p>
+        <div class="keys-grid" style="margin-top:2rem;">
+          <div class="key-card copper">
+            <span class="key-icon">🗝️</span>
+            <p class="key-name">Copper Key</p>
+            <p class="key-desc">Awarded for World 1 mastery. Your first proof that you belong in the OASIS.</p>
+          </div>
+          <div class="key-card jade">
+            <span class="key-icon">🗝️</span>
+            <p class="key-name">Jade Key</p>
+            <p class="key-desc">Mid-season mastery. You've made it halfway and proven your skills are real.</p>
+          </div>
+          <div class="key-card crystal">
+            <span class="key-icon">🗝️</span>
+            <p class="key-name">Crystal Key</p>
+            <p class="key-desc">Final Boss Battle completion. The rarest key. Earn it and enter the Hall of Fame.</p>
+          </div>
+        </div>
+
+        <!-- ENTER CTA -->
+        <div style="text-align:center;margin-top:4rem;padding:3rem 2rem;position:relative;overflow:hidden;border-radius:12px;background:var(--card);border:1px solid var(--border);">
+          <h2 class="enter-title" style="font-size:clamp(1.5rem,4vw,2.5rem);margin-bottom:0.75rem;">READY, PLAYER?</h2>
+          <p class="enter-desc">Your OASIS identity is waiting. Create your GamerTag, build your avatar, and enter the world.</p>
+          <a href="#" class="btn-primary" onclick="openAvatar(); return false;">🆕 Create Your OASIS Identity</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="footer-logo">THE OASIS</p>
+  <p class="footer-sub">Noblesville East Middle School · The Millers · Computer Science · Fall 2026</p>
+</footer>
+
+<!-- STUDENT DASHBOARD MODAL -->
+<div class="modal-overlay" id="dashModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeDash()">✕</button>
+
+    <!-- ANNOUNCEMENT BANNER -->
+    <div id="dashAnnouncementBanner" style="display:none;padding:0.85rem 1.5rem;border-radius:8px;margin:1.25rem 1.25rem 0;font-size:0.85rem;line-height:1.5;">
+      <span id="dashAnnouncementEmoji" style="margin-right:0.5rem;"></span>
+      <strong id="dashAnnouncementLabel" style="letter-spacing:0.05em;margin-right:0.5rem;"></strong>
+      <span id="dashAnnouncementMsg"></span>
+    </div>
+
+    <!-- LOOKUP GATE -->
+    <div id="dashLookup" class="dash-lookup">
+      <div class="dash-lookup-inner">
+        <p class="dash-lookup-icon">🔐</p>
+        <p class="dash-lookup-title">ACCESS YOUR OASIS</p>
+        <p class="dash-lookup-sub">Enter your Class Code and GamerTag to view your dashboard.</p>
+        <div class="dash-lookup-form">
+          <div class="ab-input-group">
+            <label class="ab-label">Class Code</label>
+            <input class="ab-input" type="text" placeholder="e.g. MILLER1" maxlength="12" id="classCodeInput" style="text-align:center;">
+          </div>
+          <div class="ab-input-group">
+            <label class="ab-label">GamerTag</label>
+            <input class="ab-input" type="text" placeholder="YourTag" maxlength="16" id="lookupTagInput" style="text-align:center;" onkeydown="if(event.key==='Enter') lookupStudent();">
+          </div>
+        </div>
+        <p class="dash-lookup-error" id="dashLookupError"></p>
+        <button class="ab-submit" onclick="lookupStudent()" style="margin-top:0.5rem;">⚡ Unlock Dashboard</button>
+      </div>
+    </div>
+
+    <!-- ACTUAL DASHBOARD (hidden until unlocked) -->
+    <div id="dashContent" style="display:none;">
+
+      <!-- PLAYER CARD + ASSIGNMENTS SIDE BY SIDE -->
+      <div style="display:grid;grid-template-columns:280px 1fr;gap:0;min-height:400px;">
+
+        <!-- LEFT: PLAYER CARD -->
+        <div style="background:linear-gradient(160deg,var(--card2) 0%,var(--navy) 100%);border-right:1px solid var(--border);padding:2rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1rem;">
+
+          <!-- Avatar -->
+          <div style="width:100px;height:100px;border-radius:14px;border:2px solid var(--gold);background:var(--black);display:flex;align-items:center;justify-content:center;box-shadow:0 0 25px rgba(255,215,0,0.2);">
+            <canvas id="dashAvatarCanvas" width="100" height="100" style="border-radius:10px;"></canvas>
+          </div>
+
+          <!-- Name & Spec -->
+          <div>
+            <p style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:1.2rem;color:var(--white);letter-spacing:0.05em;" id="dashTag">—</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--cyan);letter-spacing:0.12em;margin-top:0.2rem;" id="dashSpec">// —</p>
+          </div>
+
+          <!-- XP & Level -->
+          <div style="background:var(--black);border:1px solid var(--border);border-radius:10px;padding:1rem 1.5rem;width:100%;">
+            <p style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:2.2rem;color:var(--gold);line-height:1;text-shadow:0 0 20px rgba(255,215,0,0.4);" id="dashXP">0</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-top:0.25rem;">Total XP</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--cyan);margin-top:0.4rem;letter-spacing:0.1em;" id="dashLevel">// LEVEL 1</p>
+          </div>
+
+          <!-- XP Progress bar to next level -->
+          <div style="width:100%;">
+            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);margin-bottom:0.3rem;">
+              <span>Progress to next level</span>
+              <span id="dashXpToNext"></span>
+            </div>
+            <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;">
+              <div id="dashXpBar" style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold),var(--cyan));width:0%;transition:width 0.8s ease;"></div>
+            </div>
+          </div>
+
+          <!-- Keys -->
+          <div style="width:100%;">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.58rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.5rem;">// Keys Earned</p>
+            <div style="display:flex;gap:0.4rem;justify-content:center;" id="dashKeysRow">
+              <span class="dash-key-badge crystal-locked">🔒 Copper</span>
+              <span class="dash-key-badge crystal-locked">🔒 Jade</span>
+              <span class="dash-key-badge crystal-locked">🔒 Crystal</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: ASSIGNMENTS -->
+        <div style="padding:2rem;display:flex;flex-direction:column;gap:1rem;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <p style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.85rem;color:var(--white);letter-spacing:0.08em;">📋 Assignments & Upcoming</p>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);" id="dashGradeLabel"></span>
+          </div>
+          <div id="dashAssignments" style="flex:1;">
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);">// Loading...</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HELP REQUEST MODAL -->
+<div class="modal-overlay" id="helpModal" style="z-index:1000;">
+  <div class="modal" style="max-width:480px;">
+    <button class="modal-close" onclick="closeHelpModal()">✕</button>
+    <div style="padding:1.5rem 2rem;background:var(--card2);border-radius:12px 12px 0 0;border-bottom:1px solid var(--border);">
+      <p style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.9rem;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">🆘 Need Help?</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);">Your teacher will see your GamerTag and what you're struggling with.</p>
+    </div>
+    <div style="padding:1.5rem 2rem;">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.3rem;">Assignment</p>
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;color:var(--white);margin-bottom:1.25rem;" id="helpAssignmentTitle">—</p>
+
+      <p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.4rem;">What are you struggling with?</p>
+      <textarea id="helpCommentInput"
+        placeholder="Describe what's confusing or where you're stuck. The more detail the better — your teacher can help you faster!"
+        style="width:100%;height:120px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.82rem;line-height:1.6;outline:none;resize:vertical;transition:border-color 0.2s;"
+        onfocus="this.style.borderColor='var(--gold)'"
+        onblur="this.style.borderColor='rgba(255,255,255,0.1)'"></textarea>
+
+      <p style="font-size:0.72rem;color:var(--muted);margin-top:0.75rem;line-height:1.5;" id="helpStatus"></p>
+
+      <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+        <button onclick="closeHelpModal()"
+          style="flex:1;background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--muted);padding:0.65rem;border-radius:6px;font-family:'Inter',sans-serif;font-size:0.8rem;cursor:pointer;">
+          Cancel
+        </button>
+        <button onclick="submitHelpRequest()"
+          style="flex:2;background:var(--gold);color:var(--black);border:none;padding:0.65rem;border-radius:6px;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.75rem;letter-spacing:0.08em;cursor:pointer;box-shadow:0 0 20px rgba(255,215,0,0.3);transition:all 0.2s;"
+          id="helpSubmitBtn">
+          ⚡ Send to Teacher
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AVATAR CREATOR -->
+<div class="avatar-modal" id="avatarModal">
+  <div class="avatar-builder">
+    <div class="ab-header">
+      <p class="ab-title">⚡ CREATE YOUR OASIS IDENTITY</p>
+      <p class="ab-sub">Build your avatar, choose your GamerTag, and pick your specialization.</p>
+    </div>
+    <div class="ab-body">
+
+      <!-- PREVIEW CARD -->
+      <div class="ab-preview">
+        <div class="ab-card" id="avatarCard">
+          <div class="ab-card-glow" id="avatarGlow"></div>
+          <div class="ab-card-top" id="avatarCardTop">
+            <span class="ab-card-class" id="avatarCardClass">BUILDER</span>
+          </div>
+          <div class="ab-card-avatar">
+            <canvas id="avatarCanvas" width="100" height="100"></canvas>
+          </div>
+          <div class="ab-card-name" id="avatarCardName">YourTag</div>
+          <div class="ab-card-spec" id="avatarCardSpec">⚙️ Builder</div>
+          <div class="ab-card-bottom">
+            <span class="ab-card-id">OASIS ID</span>
+            <span class="ab-card-season">FALL 2026</span>
+          </div>
+        </div>
+        <div class="ab-string" id="avatarString">hair:01|face:01|outfit:01|color:#FFD700</div>
+      </div>
+
+      <!-- OPTIONS -->
+      <div class="ab-options">
+        <div class="ab-input-row">
+          <div class="ab-input-group">
+            <label class="ab-label">GamerTag</label>
+            <input class="ab-input" type="text" placeholder="YourTag" maxlength="16" id="gamerTag" oninput="updatePreview()">
+          </div>
+          <div class="ab-input-group">
+            <label class="ab-label">Class Period</label>
+            <select class="ab-select" id="periodSelect" onchange="updatePreview()">
+              <option value="1">Period 1</option>
+              <option value="2">Period 2</option>
+              <option value="3">Period 3</option>
+              <option value="4">Period 4</option>
+              <option value="5">Period 5</option>
+              <option value="6">Period 6</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ab-input-row">
+          <div class="ab-input-group">
+            <label class="ab-label">Grade</label>
+            <select class="ab-select" id="gradeSelect">
+              <option value="6th">6th Grade</option>
+              <option value="7th">7th Grade</option>
+              <option value="8th">8th Grade</option>
+            </select>
+          </div>
+          <div class="ab-input-group">
+            <label class="ab-label">Specialization</label>
+            <select class="ab-select" id="specSelect" onchange="updatePreview()">
+              <option value="Builder">⚙️ Builder</option>
+              <option value="Programmer">💻 Programmer</option>
+              <option value="Designer">🎨 Designer</option>
+              <option value="Engineer">🔧 Engineer</option>
+              <option value="Analyst">📊 Analyst</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ab-section">
+          <p class="ab-section-label">Avatar Style</p>
+          <div class="gender-toggle">
+            <button class="gender-btn active" id="genderMale" onclick="setGender('male')">♂ Male</button>
+            <button class="gender-btn" id="genderFemale" onclick="setGender('female')">♀ Female</button>
+          </div>
+        </div>
+
+        <div class="ab-section">
+          <p class="ab-section-label">Skin Tone</p>
+          <div class="ab-choices">
+            <div class="ab-color-choice selected" data-type="skin" data-val="#FDBCB4" style="background:#FDBCB4" onclick="selectSkin(this)"></div>
+            <div class="ab-color-choice" data-type="skin" data-val="#F1C27D" style="background:#F1C27D" onclick="selectSkin(this)"></div>
+            <div class="ab-color-choice" data-type="skin" data-val="#C68642" style="background:#C68642" onclick="selectSkin(this)"></div>
+            <div class="ab-color-choice" data-type="skin" data-val="#8D5524" style="background:#8D5524" onclick="selectSkin(this)"></div>
+            <div class="ab-color-choice" data-type="skin" data-val="#4A2912" style="background:#4A2912" onclick="selectSkin(this)"></div>
+          </div>
+        </div>
+
+        <div class="ab-section">
+          <p class="ab-section-label">Hair Style</p>
+          <!-- MALE HAIR -->
+          <div class="ab-choices" id="maleHairChoices" style="margin-bottom:0.5rem;">
+            <div class="ab-choice selected" data-type="hair" data-val="0" onclick="selectPart('hair',this)" title="Short">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="8" rx="10" ry="7" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="1" onclick="selectPart('hair',this)" title="Side Part">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="6" rx="10" ry="5" fill="currentColor"/><rect x="4" y="6" width="4" height="8" rx="2" fill="currentColor"/><rect x="20" y="6" width="4" height="8" rx="2" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="2" onclick="selectPart('hair',this)" title="Spiky">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="7" rx="10" ry="6" fill="currentColor"/><rect x="10" y="2" width="3" height="5" rx="1" fill="currentColor"/><rect x="15" y="1" width="3" height="6" rx="1" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="3" onclick="selectPart('hair',this)" title="Curly">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="8" rx="10" ry="7" fill="currentColor"/><circle cx="6" cy="10" r="4" fill="currentColor"/><circle cx="22" cy="10" r="4" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="4" onclick="selectPart('hair',this)" title="Buzzcut">
+              <svg width="28" height="20" viewBox="0 0 28 20"><rect x="4" y="2" width="20" height="6" rx="3" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="5" onclick="selectPart('hair',this)" title="Hat">
+              <svg width="28" height="20" viewBox="0 0 28 20"><rect x="2" y="12" width="24" height="4" rx="2" fill="currentColor"/><rect x="8" y="2" width="12" height="11" rx="3" fill="currentColor"/></svg>
+            </div>
+          </div>
+          <!-- FEMALE HAIR -->
+          <div class="ab-choices" id="femaleHairChoices" style="margin-bottom:0.5rem; display:none;">
+            <div class="ab-choice selected" data-type="hair" data-val="10" onclick="selectPart('hair',this)" title="Long Straight">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="5" rx="10" ry="5" fill="currentColor"/><rect x="4" y="5" width="4" height="14" rx="2" fill="currentColor"/><rect x="20" y="5" width="4" height="14" rx="2" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="11" onclick="selectPart('hair',this)" title="Ponytail">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="13" cy="6" rx="9" ry="5" fill="currentColor"/><rect x="4" y="6" width="3" height="10" rx="1" fill="currentColor"/><ellipse cx="22" cy="8" rx="3" ry="6" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="12" onclick="selectPart('hair',this)" title="Buns">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="8" rx="8" ry="5" fill="currentColor"/><circle cx="5" cy="5" r="4" fill="currentColor"/><circle cx="23" cy="5" r="4" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="13" onclick="selectPart('hair',this)" title="Wavy Long">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="5" rx="10" ry="5" fill="currentColor"/><path d="M4 8 Q6 12 4 16 Q6 20 4 20" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M24 8 Q22 12 24 16 Q22 20 24 20" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="14" onclick="selectPart('hair',this)" title="Short Bob">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="6" rx="10" ry="5" fill="currentColor"/><rect x="4" y="6" width="4" height="9" rx="2" fill="currentColor"/><rect x="20" y="6" width="4" height="9" rx="2" fill="currentColor"/><rect x="4" y="14" width="20" height="3" rx="1" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="hair" data-val="15" onclick="selectPart('hair',this)" title="Braids">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="14" cy="5" rx="10" ry="5" fill="currentColor"/><rect x="5" y="8" width="3" height="12" rx="1" fill="currentColor"/><rect x="9" y="8" width="3" height="12" rx="1" fill="currentColor"/><rect x="16" y="8" width="3" height="12" rx="1" fill="currentColor"/><rect x="20" y="8" width="3" height="12" rx="1" fill="currentColor"/></svg>
+            </div>
+          </div>
+          <!-- HAIR COLOR (shared) -->
+          <div class="ab-choices">
+            <div class="ab-color-choice selected" data-type="haircolor" data-val="#2C1810" style="background:#2C1810" onclick="selectHairColor(this)"></div>
+            <div class="ab-color-choice" data-type="haircolor" data-val="#8B4513" style="background:#8B4513" onclick="selectHairColor(this)"></div>
+            <div class="ab-color-choice" data-type="haircolor" data-val="#DAA520" style="background:#DAA520" onclick="selectHairColor(this)"></div>
+            <div class="ab-color-choice" data-type="haircolor" data-val="#FF4500" style="background:#FF4500" onclick="selectHairColor(this)"></div>
+            <div class="ab-color-choice" data-type="haircolor" data-val="#C0C0C0" style="background:#C0C0C0" onclick="selectHairColor(this)"></div>
+            <div class="ab-color-choice" data-type="haircolor" data-val="#00F5FF" style="background:#00F5FF" onclick="selectHairColor(this)"></div>
+            <div class="ab-color-choice" data-type="haircolor" data-val="#7B2FFF" style="background:#7B2FFF" onclick="selectHairColor(this)"></div>
+          </div>
+        </div>
+
+        <div class="ab-section">
+          <p class="ab-section-label">Eyes</p>
+          <div class="ab-choices">
+            <div class="ab-choice selected" data-type="eyes" data-val="0" onclick="selectPart('eyes',this)">
+              <svg width="28" height="20" viewBox="0 0 28 20"><circle cx="9" cy="10" r="3" fill="currentColor"/><circle cx="19" cy="10" r="3" fill="currentColor"/></svg>
+            </div>
+            <div class="ab-choice" data-type="eyes" data-val="1" onclick="selectPart('eyes',this)">
+              <svg width="28" height="20" viewBox="0 0 28 20"><ellipse cx="9" cy="10" rx="4" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><ellipse cx="19" cy="10" rx="4" ry="2" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </div>
+            <div class="ab-choice" data-type="eyes" data-val="2" onclick="selectPart('eyes',this)">
+              <svg width="28" height="20" viewBox="0 0 28 20"><line x1="5" y1="8" x2="13" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="15" y1="12" x2="23" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div class="ab-choice" data-type="eyes" data-val="3" onclick="selectPart('eyes',this)">
+              <svg width="28" height="20" viewBox="0 0 28 20"><text x="3" y="15" font-size="13">★</text><text x="16" y="15" font-size="13">★</text></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="ab-section">
+          <p class="ab-section-label">Outfit / Class</p>
+          <div class="ab-choices">
+            <div class="ab-choice selected" data-type="outfit" data-val="0" onclick="selectPart('outfit',this)" title="Coder">💻</div>
+            <div class="ab-choice" data-type="outfit" data-val="1" onclick="selectPart('outfit',this)" title="Wizard">🧙</div>
+            <div class="ab-choice" data-type="outfit" data-val="2" onclick="selectPart('outfit',this)" title="Ninja">🥷</div>
+            <div class="ab-choice" data-type="outfit" data-val="3" onclick="selectPart('outfit',this)" title="Astronaut">🚀</div>
+            <div class="ab-choice" data-type="outfit" data-val="4" onclick="selectPart('outfit',this)" title="Hero">⚡</div>
+            <div class="ab-choice" data-type="outfit" data-val="5" onclick="selectPart('outfit',this)" title="Scientist">🔬</div>
+            <div class="ab-choice" data-type="outfit" data-val="6" onclick="selectPart('outfit',this)" title="Artist">🎨</div>
+            <div class="ab-choice" data-type="outfit" data-val="7" onclick="selectPart('outfit',this)" title="Robot">🤖</div>
+          </div>
+        </div>
+
+        <div class="ab-section">
+          <p class="ab-section-label">Card Accent Color</p>
+          <div class="ab-choices">
+            <div class="ab-color-choice selected" data-type="accent" data-val="#FFD700" style="background:#FFD700" onclick="selectAccent(this)"></div>
+            <div class="ab-color-choice" data-type="accent" data-val="#00F5FF" style="background:#00F5FF" onclick="selectAccent(this)"></div>
+            <div class="ab-color-choice" data-type="accent" data-val="#7B2FFF" style="background:#7B2FFF" onclick="selectAccent(this)"></div>
+            <div class="ab-color-choice" data-type="accent" data-val="#00FF88" style="background:#00FF88" onclick="selectAccent(this)"></div>
+            <div class="ab-color-choice" data-type="accent" data-val="#FF4757" style="background:#FF4757" onclick="selectAccent(this)"></div>
+            <div class="ab-color-choice" data-type="accent" data-val="#FF6B35" style="background:#FF6B35" onclick="selectAccent(this)"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="ab-footer">
+      <button class="ab-cancel" onclick="closeAvatar()">Cancel</button>
+      <button class="ab-submit" onclick="submitIdentity()">⚡ Enter the OASIS</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── CONFIG ──
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOI27hEji_0rod_zb1f83mpGtX-oVHPcsvrUa4V5QP2rnuOUjljXdzGJrYdxG0ZomOIw/exec';
+
+  // Map class codes -> Class_Period values in the sheet. Update each season.
+  const CLASS_CODES = {
+    'MILLER1': '1',
+    'MILLER2': '2',
+    'MILLER3': '3',
+    'MILLER4': '4',
+    'MILLER5': '5',
+    'MILLER6': '6'
+  };
+
+  // ── AVATAR STATE ──
+  const av = {
+    gender: 'male',
+    skin: '#FDBCB4', hairStyle: 0, hairColor: '#2C1810',
+    eyes: 0, outfit: 0, accent: '#FFD700'
+  };
+
+  const outfitLabels = ['💻 Coder','🧙 Wizard','🥷 Ninja','🚀 Astronaut','⚡ Hero','🔬 Scientist','🎨 Artist','🤖 Robot'];
+  const outfitColors = ['#1A6B3C','#4A1A7A','#1A1A1A','#1A3A6B','#7A1A1A','#1A5A5A','#6B3A1A','#2A2A4A'];
+
+  function setGender(g) {
+    av.gender = g;
+    document.getElementById('genderMale').classList.toggle('active', g === 'male');
+    document.getElementById('genderFemale').classList.toggle('active', g === 'female');
+    document.getElementById('maleHairChoices').style.display   = g === 'male'   ? 'flex' : 'none';
+    document.getElementById('femaleHairChoices').style.display = g === 'female' ? 'flex' : 'none';
+    // Reset hair to first option for that gender
+    av.hairStyle = g === 'male' ? 0 : 10;
+    document.querySelectorAll('[data-type="hair"]').forEach(e => e.classList.remove('selected'));
+    const firstHair = document.querySelector(`#${g}HairChoices .ab-choice`);
+    if (firstHair) firstHair.classList.add('selected');
+    updatePreview();
+  }
+
+  // ── CANVAS DRAW ──
+  function drawAvatar() {
+    const canvas = document.getElementById('avatarCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = 100, H = 100;
+    ctx.clearRect(0, 0, W, H);
+
+    const isFemale = av.gender === 'female';
+
+    // Background circle
+    ctx.fillStyle = av.accent + '22';
+    ctx.beginPath();
+    ctx.arc(50, 52, 38, 0, Math.PI*2);
+    ctx.fill();
+
+    // Body / outfit
+    const bodyColor = outfitColors[av.outfit] || '#1A6B3C';
+    ctx.fillStyle = bodyColor;
+    if (isFemale) {
+      // Slightly rounder shoulders for female
+      ctx.beginPath();
+      ctx.ellipse(50, 84, 22, 20, 0, 0, Math.PI*2);
+      ctx.fill();
+    } else {
+      ctx.beginPath();
+      ctx.ellipse(50, 82, 26, 22, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // Outfit icon
+    ctx.font = '18px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(['💻','🧙','🥷','🚀','⚡','🔬','🎨','🤖'][av.outfit], 50, 90);
+
+    // Neck
+    ctx.fillStyle = av.skin;
+    ctx.fillRect(44, 57, 12, 10);
+
+    // Head (slightly rounder for female)
+    ctx.fillStyle = av.skin;
+    ctx.beginPath();
+    if (isFemale) {
+      ctx.ellipse(50, 46, 19, 22, 0, 0, Math.PI*2);
+    } else {
+      ctx.ellipse(50, 46, 20, 22, 0, 0, Math.PI*2);
+    }
+    ctx.fill();
+
+    // Ears
+    ctx.fillStyle = av.skin;
+    ctx.beginPath(); ctx.ellipse(31, 46, 5, 7, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(69, 46, 5, 7, 0, 0, Math.PI*2); ctx.fill();
+
+    // ── HAIR ──
+    ctx.fillStyle = av.hairColor;
+    const hs = av.hairStyle;
+
+    if (hs === 0) { // Male: Short
+      ctx.beginPath(); ctx.ellipse(50, 32, 20, 14, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 32, 40, 8);
+    } else if (hs === 1) { // Male: Side part
+      ctx.beginPath(); ctx.ellipse(50, 32, 20, 14, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 32, 40, 6);
+      ctx.fillRect(30, 32, 8, 16); ctx.fillRect(62, 32, 8, 16);
+    } else if (hs === 2) { // Male: Spiky
+      ctx.beginPath(); ctx.ellipse(50, 34, 18, 12, 0, Math.PI, Math.PI*2); ctx.fill();
+      for(let i=0;i<5;i++){
+        ctx.beginPath(); ctx.moveTo(34+i*8,34); ctx.lineTo(38+i*8,14); ctx.lineTo(42+i*8,34); ctx.fill();
+      }
+    } else if (hs === 3) { // Male: Curly
+      ctx.beginPath(); ctx.arc(50, 30, 22, 0, Math.PI*2); ctx.fill();
+      [30,38,50,62,70].forEach(x=>{
+        ctx.beginPath(); ctx.arc(x, 38, 8, 0, Math.PI*2); ctx.fill();
+      });
+    } else if (hs === 4) { // Male: Buzzcut
+      ctx.globalAlpha = 0.4;
+      ctx.beginPath(); ctx.ellipse(50, 30, 20, 16, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.globalAlpha = 1;
+    } else if (hs === 5) { // Male: Hat
+      ctx.fillRect(26, 30, 48, 7);
+      ctx.beginPath(); ctx.ellipse(50, 24, 16, 10, 0, 0, Math.PI*2); ctx.fill();
+
+    } else if (hs === 10) { // Female: Long Straight
+      ctx.beginPath(); ctx.ellipse(50, 30, 20, 14, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 30, 40, 8);
+      ctx.fillRect(30, 35, 7, 32); // left side
+      ctx.fillRect(63, 35, 7, 32); // right side
+    } else if (hs === 11) { // Female: Ponytail
+      ctx.beginPath(); ctx.ellipse(50, 30, 20, 14, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 30, 40, 8);
+      ctx.fillRect(30, 35, 6, 18); // left
+      // Ponytail
+      ctx.beginPath(); ctx.ellipse(68, 36, 5, 18, 0.3, 0, Math.PI*2); ctx.fill();
+    } else if (hs === 12) { // Female: Buns
+      ctx.beginPath(); ctx.ellipse(50, 33, 18, 11, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(32, 33, 36, 6);
+      ctx.beginPath(); ctx.arc(32, 26, 9, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(68, 26, 9, 0, Math.PI*2); ctx.fill();
+    } else if (hs === 13) { // Female: Wavy Long
+      ctx.beginPath(); ctx.ellipse(50, 30, 20, 14, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 30, 40, 6);
+      // Wavy sides
+      for(let y=36; y<72; y+=8){
+        ctx.beginPath(); ctx.arc(33, y+4, 5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(67, y+4, 5, 0, Math.PI*2); ctx.fill();
+      }
+    } else if (hs === 14) { // Female: Short Bob
+      ctx.beginPath(); ctx.ellipse(50, 32, 20, 13, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 32, 40, 6);
+      ctx.fillRect(30, 35, 6, 14);
+      ctx.fillRect(64, 35, 6, 14);
+      ctx.fillRect(30, 48, 40, 5);
+    } else if (hs === 15) { // Female: Braids
+      ctx.beginPath(); ctx.ellipse(50, 30, 20, 14, 0, Math.PI, Math.PI*2); ctx.fill();
+      ctx.fillRect(30, 30, 40, 6);
+      // Braids
+      [34,40,60,66].forEach(x=>{
+        for(let y=36; y<75; y+=6){
+          ctx.beginPath(); ctx.ellipse(x, y, 3, 4, 0, 0, Math.PI*2); ctx.fill();
+        }
+      });
+    }
+
+    // ── EYES ──
+    const eyeY = 44;
+    ctx.fillStyle = '#1A1A2E';
+    if (av.eyes === 0) {
+      if (isFemale) {
+        // Bigger eyes with lashes for female
+        ctx.beginPath(); ctx.arc(41, eyeY, 5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(59, eyeY, 5, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(43, eyeY-1, 2, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(61, eyeY-1, 2, 0, Math.PI*2); ctx.fill();
+        // Lashes
+        ctx.strokeStyle = '#1A1A2E'; ctx.lineWidth = 1.5;
+        [-8,-5,-2,1,4].forEach(dx=>{
+          ctx.beginPath(); ctx.moveTo(41+dx, eyeY-5); ctx.lineTo(41+dx-1, eyeY-9); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(59+dx, eyeY-5); ctx.lineTo(59+dx-1, eyeY-9); ctx.stroke();
+        });
+      } else {
+        ctx.beginPath(); ctx.arc(41, eyeY, 4, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(59, eyeY, 4, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.beginPath(); ctx.arc(43, eyeY-1, 1.5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(61, eyeY-1, 1.5, 0, Math.PI*2); ctx.fill();
+      }
+    } else if (av.eyes === 1) {
+      ctx.strokeStyle = '#888'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.arc(41, eyeY, 5, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(59, eyeY, 5, 0, Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(46, eyeY); ctx.lineTo(54, eyeY); ctx.stroke();
+      ctx.fillStyle = '#1A1A2E';
+      ctx.beginPath(); ctx.arc(41, eyeY, 3, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(59, eyeY, 3, 0, Math.PI*2); ctx.fill();
+    } else if (av.eyes === 2) {
+      ctx.fillStyle = '#1A1A2E';
+      ctx.beginPath(); ctx.arc(41, eyeY, 4, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(59, eyeY, 4, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#1A1A2E'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(36,eyeY-6); ctx.lineTo(46,eyeY-3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(54,eyeY-3); ctx.lineTo(64,eyeY-6); ctx.stroke();
+    } else if (av.eyes === 3) {
+      ctx.fillStyle = av.accent;
+      ctx.font = '10px serif'; ctx.textAlign='center';
+      ctx.fillText('★', 41, eyeY+4);
+      ctx.fillText('★', 59, eyeY+4);
+    }
+
+    // Nose
+    ctx.strokeStyle = '#00000022'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(50, 52, 3, 0, Math.PI); ctx.stroke();
+
+    // Mouth
+    ctx.strokeStyle = isFemale ? '#C05080' : '#8B3A3A';
+    ctx.lineWidth = isFemale ? 1.5 : 2;
+    ctx.beginPath();
+    ctx.arc(50, 56, isFemale ? 6 : 7, 0.2, Math.PI-0.2);
+    ctx.stroke();
+    if (isFemale) {
+      // Lip color hint
+      ctx.fillStyle = '#C0508044';
+      ctx.beginPath(); ctx.arc(50, 58, 5, 0, Math.PI); ctx.fill();
+    }
+
+    // Accent glow ring
+    ctx.strokeStyle = av.accent + '66';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(50, 50, 46, 0, Math.PI*2); ctx.stroke();
+  }
+  function updatePreview() {
+    const tag  = document.getElementById('gamerTag').value.trim() || 'YourTag';
+    const spec = document.getElementById('specSelect');
+    const specVal = spec ? spec.value : 'Builder';
+    const specText = spec ? spec.options[spec.selectedIndex].text : '⚙️ Builder';
+
+    // Update card UI
+    const nameEl  = document.getElementById('avatarCardName');
+    const specEl  = document.getElementById('avatarCardSpec');
+    const classEl = document.getElementById('avatarCardClass');
+    const topEl   = document.getElementById('avatarCardTop');
+    const glowEl  = document.getElementById('avatarGlow');
+    const cardEl  = document.getElementById('avatarCard');
+    const specLbEl= document.getElementById('avatarCardSpec');
+
+    if(nameEl)  nameEl.textContent  = tag;
+    if(specEl)  specEl.textContent  = specText;
+    if(classEl) classEl.textContent = specVal.toUpperCase();
+    if(topEl)   topEl.style.background = av.accent;
+    if(glowEl)  glowEl.style.background = `radial-gradient(ellipse at 50% 0%, ${av.accent}22 0%, transparent 70%)`;
+    if(cardEl)  { cardEl.style.borderColor = av.accent; cardEl.style.boxShadow = `0 0 30px ${av.accent}44, 0 0 60px ${av.accent}18`; }
+    if(specLbEl) specLbEl.style.color = av.accent;
+
+    // Update avatar string
+    const str = `skin:${av.skin}|hair:${av.hairStyle}|haircolor:${av.hairColor}|eyes:${av.eyes}|outfit:${av.outfit}|accent:${av.accent}|tag:${tag}|spec:${specVal}`;
+    const strEl = document.getElementById('avatarString');
+    if(strEl) strEl.textContent = str;
+
+    drawAvatar();
+  }
+
+  function selectPart(type, el) {
+    document.querySelectorAll(`[data-type="${type}"]`).forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    const val = parseInt(el.dataset.val);
+    if (type === 'hair')   av.hairStyle = val;
+    else if (type === 'eyes')   av.eyes = val;
+    else if (type === 'outfit') av.outfit = val;
+    updatePreview();
+  }
+
+  function selectSkin(el) {
+    document.querySelectorAll('[data-type="skin"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    av.skin = el.dataset.val;
+    updatePreview();
+  }
+
+  function selectHairColor(el) {
+    document.querySelectorAll('[data-type="haircolor"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    av.hairColor = el.dataset.val;
+    updatePreview();
+  }
+
+  function selectAccent(el) {
+    document.querySelectorAll('[data-type="accent"]').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+    av.accent = el.dataset.val;
+    updatePreview();
+  }
+
+  // Legacy stubs so old HTML refs don't break
+  function selectChoice(el) { selectPart(el.dataset.type, el); }
+  function selectColor(el)  { selectAccent(el); }
+  function updateString()   { updatePreview(); }
+  function updateAvatarDisplay() { drawAvatar(); }
+
+  // ── PAGE TABS ──
+  function switchPageTab(name) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + name).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── LIVE DATA ──
+  async function loadOASISData() {
+    try {
+      const res = await fetch(APPS_SCRIPT_URL);
+      const data = await res.json();
+      renderLeaderboard(data.students || []);
+      renderClassComp(data.classes || []);
+      renderHomeTab(data.students || [], data.classes || [], data.achievements || []);
+    } catch(e) {
+      document.getElementById('lbBody').innerHTML = `
+        <div class="lb-row" style="justify-content:center;padding:2rem;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// Season data will appear here once questers enter the OASIS</span>
+        </div>`;
+      document.getElementById('compGrid').innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// Class data will appear here once the season begins</span>
+        </div>`;
+    }
+  }
+
+  function renderLeaderboard(students) {
+    const lbBody = document.getElementById('lbBody');
+
+    // Update season bar questers count
+    const validStudents = students.filter(s => s.GamerTag && s.GamerTag.trim() !== '');
+    const questersEl = document.getElementById('statQuesters');
+    if (questersEl) questersEl.textContent = validStudents.length || '—';
+
+    // Set last updated timestamp
+    const lbUpdated = document.getElementById('lbLastUpdated');
+    if (lbUpdated) {
+      const now = new Date();
+      lbUpdated.textContent = `// Last updated: ${now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'})} at ${now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+    }
+
+    // Filter out empty rows, sort by XP desc, take top 10
+    const valid = validStudents
+      .sort((a,b) => (Number(b.Current_XP)||0) - (Number(a.Current_XP)||0))
+      .slice(0, 10);
+
+    if (valid.length === 0) {
+      lbBody.innerHTML = `
+        <div class="lb-row" style="justify-content:center;padding:2rem;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// No questers yet — season starts soon</span>
+        </div>`;
+      return;
+    }
+
+    const avatarEmojis = ['🧙','🤖','🦸','🧑‍💻','🥷','👨‍🚀','🦊','🐉','⚡','🎮'];
+    const bgColors = [
+      'rgba(255,215,0,0.1)','rgba(0,245,255,0.1)','rgba(123,47,255,0.1)',
+      'rgba(0,255,136,0.08)','rgba(255,179,71,0.08)','rgba(0,245,255,0.08)',
+      'rgba(255,215,0,0.08)','rgba(123,47,255,0.08)','rgba(0,255,136,0.1)','rgba(255,71,87,0.08)'
+    ];
+
+    lbBody.innerHTML = valid.map((s, i) => {
+      const rank = i + 1;
+      const isTop = rank <= 3;
+      const xp = Number(s.Current_XP) || 0;
+      const copper = s.Copper_Key === true || s.Copper_Key === 'TRUE';
+      const jade   = s.Jade_Key   === true || s.Jade_Key   === 'TRUE';
+      const crystal= s.Crystal_Key=== true || s.Crystal_Key=== 'TRUE';
+      const emoji = avatarEmojis[i % avatarEmojis.length];
+      const bg = bgColors[i % bgColors.length];
+
+      // Parse avatar string if available
+      let displayEmoji = emoji;
+      if (s.Avatar_String) {
+        const parts = Object.fromEntries(s.Avatar_String.split('|').map(p => p.split(':')));
+        const om = { '01':'🧙','02':'🤖','03':'🦸','04':'🧑‍💻','05':'🥷','06':'👨‍🚀' };
+        if (parts.outfit && om[parts.outfit]) displayEmoji = om[parts.outfit];
+      }
+
+      return `
+        <div class="lb-row">
+          <span class="lb-rank ${isTop?'top':''}">#${rank}</span>
+          <div class="lb-avatar" style="background:${bg};">${displayEmoji}</div>
+          <div class="lb-info">
+            <div class="lb-tag">${s.GamerTag}</div>
+            <div class="lb-spec">${s.Specialization || 'Quester'}</div>
+          </div>
+          <div class="lb-keys">
+            <div class="lb-key ${copper?'c':'empty'}">${copper?'C':'·'}</div>
+            <div class="lb-key ${jade?'j':'empty'}">${jade?'J':'·'}</div>
+            <div class="lb-key ${crystal?'x':'empty'}">${crystal?'X':'·'}</div>
+          </div>
+          <div class="lb-xp">${xp.toLocaleString()} XP</div>
+          <div class="lb-period">${s.Class_Period ? 'Period '+s.Class_Period : ''}</div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderClassComp(classes) {
+    const grid = document.getElementById('compGrid');
+    const valid = classes.filter(c => c.Class_Period && c.Class_Period.toString().trim() !== '');
+
+    // Set last updated timestamp
+    const compUpdated = document.getElementById('compLastUpdated');
+    if (compUpdated) {
+      const now = new Date();
+      compUpdated.textContent = `// Last updated: ${now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'})} at ${now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+    }
+
+    if (valid.length === 0) {
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:2rem;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// Class competition data will appear here each Friday</span>
+        </div>`;
+      return;
+    }
+
+    // Combined score: (Avg XP × 0.6) + (Completion Rate % × 0.4)
+    const scored = valid.map(c => {
+      const avgXP = Number(c.Average_XP_Per_Student) || 0;
+      const completionNum = parseFloat(c.Quest_Completion_Rate) || 0;
+      const score = (avgXP * 0.6) + (completionNum * 0.4);
+      return { ...c, avgXP, completionNum, score };
+    });
+
+    const maxScore = Math.max(...scored.map(c => c.score));
+    const maxAvg   = Math.max(...scored.map(c => c.avgXP)) || 1;
+
+    grid.innerHTML = scored.map(c => {
+      const isWinner = c.score === maxScore && maxScore > 0;
+      const compPct  = Math.round((c.avgXP / maxAvg) * 100);
+
+      return `
+        <div class="comp-card ${isWinner?'winner':''}">
+          ${isWinner ? '<span class="comp-crown">👑</span>' : ''}
+          <p class="comp-period">Period ${c.Class_Period}</p>
+          <p class="comp-name">${isWinner ? '⚡ This Week\'s Leader' : 'Class '+c.Class_Period}</p>
+          <div class="comp-stat">
+            <p class="comp-stat-label">Completion Rate</p>
+            <div class="comp-bar"><div class="comp-bar-fill" style="width:${Math.min(c.completionNum,100)}%"></div></div>
+            <p class="comp-val">${c.Quest_Completion_Rate || '0%'}</p>
+          </div>
+          <div class="comp-stat">
+            <p class="comp-stat-label">Avg XP Per Student</p>
+            <div class="comp-bar"><div class="comp-bar-fill cyan" style="width:${compPct}%"></div></div>
+            <p class="comp-val" style="color:var(--cyan)">${c.avgXP} XP</p>
+          </div>
+          <div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.06);">
+            <p class="comp-stat-label">Combined Score</p>
+            <p class="comp-val" style="color:${isWinner?'var(--gold)':'var(--white)'};">${c.score.toFixed(1)}</p>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── HOME TAB ──
+  function renderHomeTab(students, classes, achievements) {
+    // Weekly Champion — highest combined score class
+    const validClasses = (classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
+    const champion = document.getElementById('weeklyChampion');
+    if (champion) {
+      if (validClasses.length === 0) {
+        champion.innerHTML = `<div style="background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(123,47,255,0.08));border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:2rem;text-align:center;"><p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Class competition data will appear here each Friday</p></div>`;
+      } else {
+        const scored = validClasses.map(c => {
+          const avgXP = Number(c.Average_XP_Per_Student) || 0;
+          const comp = parseFloat(c.Quest_Completion_Rate) || 0;
+          return { ...c, score: (avgXP * 0.6) + (comp * 0.4) };
+        }).sort((a,b) => b.score - a.score);
+        const winner = scored[0];
+        champion.innerHTML = `
+          <div style="background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(123,47,255,0.08));border:1px solid rgba(255,215,0,0.4);border-radius:10px;padding:2rem;text-align:center;">
+            <p style="font-size:2.5rem;margin-bottom:0.5rem;">👑</p>
+            <p style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.4rem;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.3rem;">PERIOD ${winner.Class_Period}</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:1rem;">This Week's Leading Class</p>
+            <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
+              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--gold);font-weight:700;">${winner.score.toFixed(1)}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">SCORE</p></div>
+              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--cyan);font-weight:700;">${Number(winner.Average_XP_Per_Student)||0}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">AVG XP</p></div>
+              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--green);font-weight:700;">${winner.Quest_Completion_Rate||'0%'}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">COMPLETION</p></div>
+            </div>
+          </div>`;
+      }
+    }
+
+    // Weekly Award Winners from achievements log
+    const winnersEl = document.getElementById('weeklyWinners');
+    if (winnersEl) {
+      const recentAchievements = (achievements || []).filter(a => a.Achievement_Type && a.OASIS_ID);
+      if (recentAchievements.length === 0) {
+        winnersEl.innerHTML = `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;text-align:center;grid-column:1/-1;"><p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Award winners will appear here after Friday</p></div>`;
+      } else {
+        const awardEmojis = { 'Builder_of_the_Week':'🔨','Debugger_of_the_Week':'🐛','Explorer_of_the_Week':'🧭','Architect_of_the_Week':'🏗️','Innovator_of_the_Week':'💡','Guardian_of_the_OASIS':'🛡️' };
+        // Get most recent of each type
+        const seen = {};
+        const latest = recentAchievements.reverse().filter(a => {
+          if (seen[a.Achievement_Type]) return false;
+          seen[a.Achievement_Type] = true;
+          return true;
+        });
+        const studentMap = {};
+        (students||[]).forEach(s => { if(s.OASIS_ID) studentMap[s.OASIS_ID] = s.GamerTag; });
+        winnersEl.innerHTML = latest.map(a => {
+          const emoji = awardEmojis[a.Achievement_Type] || '🏆';
+          const label = (a.Achievement_Type||'').replace(/_/g,' ');
+          const tag = studentMap[a.OASIS_ID] || a.OASIS_ID;
+          return `<div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.25rem;display:flex;align-items:center;gap:0.75rem;">
+            <span style="font-size:1.6rem;">${emoji}</span>
+            <div>
+              <p style="font-family:'Orbitron',sans-serif;font-size:0.68rem;font-weight:700;color:var(--gold);letter-spacing:0.06em;">${label}</p>
+              <p style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--white);margin-top:0.2rem;">${tag}</p>
+            </div>
+          </div>`;
+        }).join('');
+      }
+    }
+  }
+
+  // ── AVATAR BUILDER ──
+
+  async function submitIdentity() {
+    const tag    = document.getElementById('gamerTag').value.trim();
+    const spec   = document.getElementById('specSelect').value;
+    const period = document.getElementById('periodSelect').value;
+    const grade  = document.getElementById('gradeSelect').value;
+    if (!tag) { document.getElementById('gamerTag').focus(); return; }
+
+    const avatarString = document.getElementById('avatarString').textContent;
+    const btn = document.querySelector('.ab-submit');
+    btn.textContent = '// Entering OASIS...';
+    btn.disabled = true;
+
+    try {
+      const params = new URLSearchParams({
+        action: 'registerStudent',
+        GamerTag: tag,
+        Specialization: spec,
+        Class_Period: period,
+        Grade: grade,
+        Avatar_String: avatarString,
+        Season: 'Fall_2026'
+      });
+      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      closeAvatar();
+      alert(`⚡ Welcome to the OASIS, ${tag}!\n\nYour identity has been registered to Period ${period} — ${grade} Grade. You will appear on the leaderboard after your first quest.`);
+      loadOASISData();
+    } catch(e) {
+      alert(`⚡ Welcome to the OASIS, ${tag}!\n\nAvatar created! Give your avatar string to your teacher.\n\n${avatarString}`);
+      closeAvatar();
+    } finally {
+      btn.textContent = '⚡ Enter the OASIS';
+      btn.disabled = false;
+    }
+  }
+
+  // ── MODALS ──
+  function openAvatar() { document.getElementById('avatarModal').classList.add('open'); setTimeout(()=>{ updatePreview(); }, 50); }
+  function closeAvatar() { document.getElementById('avatarModal').classList.remove('open'); }
+  function openDash() {
+    document.getElementById('dashModal').classList.add('open');
+    document.getElementById('dashLookup').style.display = 'flex';
+    document.getElementById('dashContent').style.display = 'none';
+    document.getElementById('dashLookupError').textContent = '';
+    loadDashAnnouncement();
+  }
+
+  async function loadDashAnnouncement() {
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAnnouncement`);
+      const data = await res.json();
+      const a = data.announcement;
+      const banner = document.getElementById('dashAnnouncementBanner');
+      if (a && a.Text && a.Text.trim()) {
+        const colors  = { info:'rgba(0,245,255,0.12)', alert:'rgba(255,71,87,0.12)', celebration:'rgba(0,255,136,0.12)', reminder:'rgba(255,179,71,0.12)' };
+        const borders = { info:'rgba(0,245,255,0.35)', alert:'rgba(255,71,87,0.35)', celebration:'rgba(0,255,136,0.35)', reminder:'rgba(255,179,71,0.35)' };
+        const emojis  = { info:'ℹ️', alert:'⚠️', celebration:'🎉', reminder:'🔔' };
+        banner.style.display = 'block';
+        banner.style.background = colors[a.Type] || colors.info;
+        banner.style.border = `1px solid ${borders[a.Type] || borders.info}`;
+        document.getElementById('dashAnnouncementEmoji').textContent = emojis[a.Type] || '📢';
+        document.getElementById('dashAnnouncementLabel').textContent = a.Label ? a.Label.toUpperCase() + ': ' : '';
+        document.getElementById('dashAnnouncementMsg').textContent = a.Text;
+      } else {
+        document.getElementById('dashAnnouncementBanner').style.display = 'none';
+      }
+    } catch(e) {
+      document.getElementById('dashAnnouncementBanner').style.display = 'none';
+    }
+  }
+
+  async function loadStudentAssignments(grade) {
+    const el = document.getElementById('dashAssignments');
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAssignments`);
+      const data = await res.json();
+      const all = (data.assignments || []).filter(a => {
+        if (!a.Grade || a.Grade === 'All') return true;
+        if (!grade) return true;
+        const aNum = String(a.Grade).replace(/[^0-9]/g,'');
+        const sNum = String(grade).replace(/[^0-9]/g,'');
+        return aNum === sNum;
+      });
+      all.sort((a,b) => new Date(a.Due_Date) - new Date(b.Due_Date));
+
+      if (all.length === 0) {
+        el.innerHTML = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:0.72rem;color:var(--muted);">// No assignments posted yet</p>';
+        return;
+      }
+
+      const today = new Date(); today.setHours(0,0,0,0);
+      const tEmoji = { Quest:'⚔️', Quiz:'📝', Test:'🧪', Project:'🚀', 'Boss Battle':'👾', Review:'📖' };
+      const tColor = { Quest:'var(--cyan)', Quiz:'#FFB347', Test:'var(--red)', Project:'var(--purple)', 'Boss Battle':'var(--gold)', Review:'var(--muted)' };
+
+      el.innerHTML = all.map(a => {
+        const due = a.Due_Date ? new Date(a.Due_Date) : null;
+        const isPast  = due && due < today;
+        const isToday = due && due.toDateString() === today.toDateString();
+        const isSoon  = due && !isPast && !isToday && (due - today) <= 3 * 86400000;
+        const dueFmt  = due ? due.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}) : '—';
+        const dueColor = isPast ? 'var(--muted)' : isToday ? 'var(--red)' : isSoon ? '#FFB347' : 'var(--green)';
+        const safeTitle = (a.Title||'').replace(/'/g,"\\'").replace(/"/g,'&quot;');
+        const safeId    = (a.ID||'').replace(/'/g,"\\'");
+        return `
+          <div style="padding:0.75rem 0;border-bottom:1px solid rgba(255,255,255,0.05);${isPast?'opacity:0.4':''}">
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span style="font-size:1.1rem;">${tEmoji[a.Type]||'📋'}</span>
+              <div style="flex:1;min-width:0;">
+                <p style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:600;color:${isPast?'var(--muted)':'var(--white)'};">${a.Title||''}</p>
+                <p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.1rem;">${a.World||''}${a.Description?' · '+a.Description:''}</p>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:${tColor[a.Type]||'var(--white)'};">${a.Type||''}</p>
+                <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:${dueColor};margin-top:0.1rem;">${dueFmt}${isToday?' ⚠':''}${isSoon?' 🔔':''}</p>
+              </div>
+            </div>
+            ${!isPast ? `<div style="margin-top:0.5rem;padding-left:1.85rem;">
+              <button onclick="openHelpModal('${safeId}','${safeTitle}')"
+                style="background:transparent;border:1px solid rgba(255,71,87,0.35);color:#FF4757;padding:0.25rem 0.75rem;border-radius:5px;font-family:'JetBrains Mono',monospace;font-size:0.62rem;cursor:pointer;letter-spacing:0.05em;transition:all 0.2s;"
+                onmouseover="this.style.background='rgba(255,71,87,0.12)'"
+                onmouseout="this.style.background='transparent'">
+                🆘 Need Help?
+              </button>
+            </div>` : ''}
+          </div>`;
+      }).join('');
+    } catch(e) {
+      el.innerHTML = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:0.72rem;color:var(--muted);">// Could not load assignments</p>';
+    }
+  }
+
+  function closeDash() {
+    document.getElementById('dashModal').classList.remove('open');
+  }
+
+  async function lookupStudent() {
+    const codeRaw = document.getElementById('classCodeInput').value.trim().toUpperCase();
+    const tagRaw  = document.getElementById('lookupTagInput').value.trim();
+    const errEl   = document.getElementById('dashLookupError');
+    errEl.textContent = '';
+
+    if (!codeRaw || !tagRaw) {
+      errEl.textContent = '// Enter both your Class Code and GamerTag';
+      return;
+    }
+
+    const period = CLASS_CODES[codeRaw];
+    if (!period) {
+      errEl.textContent = '// Class Code not recognized';
+      return;
+    }
+
+    errEl.textContent = '// Searching the OASIS...';
+
+    try {
+      const res = await fetch(APPS_SCRIPT_URL);
+      const data = await res.json();
+      const students = data.students || [];
+
+      const match = students.find(s =>
+        s.GamerTag && s.GamerTag.toLowerCase() === tagRaw.toLowerCase() &&
+        String(s.Class_Period) === String(period)
+      );
+
+      if (!match) {
+        errEl.textContent = '// No match found. Check your Class Code and GamerTag.';
+        return;
+      }
+
+      renderStudentDashboard(match);
+      currentStudent = match;
+      document.getElementById('dashLookup').style.display = 'none';
+      document.getElementById('dashContent').style.display = 'block';
+    } catch (e) {
+      errEl.textContent = '// Connection error. Try again in a moment.';
+    }
+  }
+
+  function renderStudentDashboard(s) {
+    const xp    = Number(s.Current_XP) || 0;
+    const level = Number(s.Current_Level) || 1;
+    const copper  = s.Copper_Key  === true || s.Copper_Key  === 'TRUE';
+    const jade    = s.Jade_Key    === true || s.Jade_Key    === 'TRUE';
+    const crystal = s.Crystal_Key === true || s.Crystal_Key === 'TRUE';
+
+    // Basic info
+    document.getElementById('dashTag').textContent  = s.GamerTag || 'Quester';
+    document.getElementById('dashSpec').textContent = '// ' + (s.Specialization || 'Quester');
+    document.getElementById('dashXP').textContent   = xp.toLocaleString();
+    document.getElementById('dashLevel').textContent = `// LEVEL ${level}`;
+
+    // XP progress bar (250 XP per level)
+    const xpIntoLevel = xp % 250;
+    const pct = Math.round((xpIntoLevel / 250) * 100);
+    const xpBar = document.getElementById('dashXpBar');
+    const xpToNext = document.getElementById('dashXpToNext');
+    if (xpBar) setTimeout(() => { xpBar.style.width = pct + '%'; }, 100);
+    if (xpToNext) xpToNext.textContent = `${xpIntoLevel} / 250 XP`;
+
+    // Keys
+    document.getElementById('dashKeysRow').innerHTML = `
+      <span class="dash-key-badge ${copper?'copper':'crystal-locked'}">${copper?'🗝 Copper':'🔒 Copper'}</span>
+      <span class="dash-key-badge ${jade?'jade':'crystal-locked'}">${jade?'🗝 Jade':'🔒 Jade'}</span>
+      <span class="dash-key-badge ${crystal?'jade':'crystal-locked'}">${crystal?'🗝 Crystal':'🔒 Crystal'}</span>
+    `;
+
+    // Grade label
+    const gradeLabel = document.getElementById('dashGradeLabel');
+    if (gradeLabel && s.Grade) gradeLabel.textContent = `// ${s.Grade} Grade`;
+
+    // Draw avatar
+    drawAvatarFromString(s.Avatar_String, 'dashAvatarCanvas');
+
+    // Load assignments
+    const gradeVal = s.Grade ? String(s.Grade).replace('th','').replace('st','').replace('nd','').replace('rd','') : '';
+    const grade = gradeVal ? gradeVal + 'th' : '';
+    loadStudentAssignments(grade);
+  }
+
+  // Parses an avatar string like skin:#FDBCB4|hair:0|haircolor:#2C1810|eyes:0|outfit:0|accent:#FFD700
+  // and draws it onto any target canvas id using the same drawAvatar logic.
+  function drawAvatarFromString(str, canvasId) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas || !str) return;
+
+    const parts = {};
+    str.split('|').forEach(p => {
+      const [k, v] = p.split(':');
+      parts[k] = v;
+    });
+
+    // Temporarily swap global av state, draw onto the main canvas logic, then copy result over
+    const savedAv = { ...av };
+    av.skin = parts.skin || av.skin;
+    av.hairStyle = parts.hair !== undefined ? parseInt(parts.hair) : av.hairStyle;
+    av.hairColor = parts.haircolor || av.hairColor;
+    av.eyes = parts.eyes !== undefined ? parseInt(parts.eyes) : av.eyes;
+    av.outfit = parts.outfit !== undefined ? parseInt(parts.outfit) : av.outfit;
+    av.accent = parts.accent || parts.color || av.accent;
+    av.gender = (av.hairStyle >= 10) ? 'female' : 'male';
+
+    // Draw onto the real avatarCanvas first (reuses all drawing logic), then copy pixels to target
+    drawAvatar();
+    const sourceCanvas = document.getElementById('avatarCanvas');
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+
+    // Restore previous builder state so the Create Identity form isn't affected
+    Object.assign(av, savedAv);
+    drawAvatar();
+  }
+
+  // ── HELP REQUESTS ──
+  let helpAssignmentId = '';
+  let helpAssignmentName = '';
+  let currentStudent = null;
+
+  function openHelpModal(assignmentId, assignmentTitle) {
+    helpAssignmentId   = assignmentId;
+    helpAssignmentName = assignmentTitle;
+    document.getElementById('helpAssignmentTitle').textContent = assignmentTitle;
+    document.getElementById('helpCommentInput').value = '';
+    document.getElementById('helpStatus').textContent = '';
+    document.getElementById('helpModal').classList.add('open');
+  }
+
+  function closeHelpModal() {
+    document.getElementById('helpModal').classList.remove('open');
+  }
+
+  async function submitHelpRequest() {
+    const comment = document.getElementById('helpCommentInput').value.trim();
+    const status  = document.getElementById('helpStatus');
+    const btn     = document.getElementById('helpSubmitBtn');
+
+    if (!comment) {
+      status.textContent = '// Please describe what you\'re struggling with first.';
+      status.style.color = 'var(--red)';
+      return;
+    }
+
+    btn.textContent = '// Sending...';
+    btn.disabled = true;
+
+    try {
+      const params = new URLSearchParams({
+        action: 'submitHelpRequest',
+        Assignment_ID: helpAssignmentId,
+        Assignment_Title: helpAssignmentName,
+        GamerTag: currentStudent ? currentStudent.GamerTag : 'Unknown',
+        Comment: comment,
+        Date: new Date().toISOString().split('T')[0]
+      });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        status.textContent = '✅ Your question has been sent! Your teacher will see it soon.';
+        status.style.color = 'var(--green)';
+        document.getElementById('helpCommentInput').value = '';
+        setTimeout(() => closeHelpModal(), 2500);
+      } else {
+        status.textContent = '// Something went wrong. Try again.';
+        status.style.color = 'var(--red)';
+      }
+    } catch(e) {
+      status.textContent = '// Could not connect. Try again in a moment.';
+      status.style.color = 'var(--red)';
+    } finally {
+      btn.textContent = '⚡ Send to Teacher';
+      btn.disabled = false;
+    }
+  }
+
+  document.getElementById('dashModal').addEventListener('click', function(e)  { if(e.target===this) closeDash(); });
+  document.getElementById('avatarModal').addEventListener('click', function(e) { if(e.target===this) closeAvatar(); });
+  document.getElementById('helpModal').addEventListener('click', function(e)   { if(e.target===this) closeHelpModal(); });
+
+  // ── INIT ──
+  loadOASISData();
+  updatePreview();
+</script>
+</body>
+</html>

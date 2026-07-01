@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE OASIS — Teacher Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0A0A0F;
+    --navy: #0D0D1A;
+    --card: #12121F;
+    --card2: #1A1A2E;
+    --gold: #FFD700;
+    --gold-dim: #B8960C;
+    --cyan: #00F5FF;
+    --purple: #7B2FFF;
+    --green: #00FF88;
+    --red: #FF4757;
+    --white: #F0F0F0;
+    --muted: #6B7280;
+    --border: rgba(255,215,0,0.18);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: rgba(10,10,15,0.95);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-title {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .header-title span { color: var(--cyan); }
+
+  .header-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 0.15rem;
+  }
+
+  .refresh-btn {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .refresh-btn:hover { border-color: var(--gold); box-shadow: 0 0 15px rgba(255,215,0,0.15); }
+
+  /* ── LAYOUT ── */
+  .container { max-width: 1300px; margin: 0 auto; padding: 1.5rem; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+  }
+
+  .stat-val {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 1.6rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 0.4rem;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 0.7rem 1.2rem;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn:hover:not(.active) { color: var(--white); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ── TOOLBAR ── */
+  .toolbar {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .search-input, .filter-select {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    outline: none;
+  }
+
+  .search-input { flex: 1; min-width: 180px; }
+  .search-input:focus, .filter-select:focus { border-color: var(--gold); }
+
+  /* ── STUDENT TABLE ── */
+  .student-table-wrap {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .student-row {
+    display: grid;
+    grid-template-columns: 44px 1.4fr 0.7fr 1fr 0.8fr 0.9fr 1.6fr;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: background 0.15s;
+  }
+
+  .student-row:last-child { border-bottom: none; }
+  .student-row:hover { background: rgba(255,215,0,0.03); }
+  .student-row.header-row {
+    background: var(--card2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .student-avatar-mini {
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    background: var(--card2);
+  }
+
+  .student-name-cell .tag {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .student-name-cell .id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    margin-top: 0.1rem;
+  }
+
+  .period-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--cyan);
+    background: rgba(0,245,255,0.08);
+    border: 1px solid rgba(0,245,255,0.2);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .xp-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .xp-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--gold);
+    font-size: 0.82rem;
+  }
+
+  .keys-cell { display: flex; gap: 0.3rem; }
+
+  .key-toggle {
+    width: 26px; height: 26px;
+    border-radius: 5px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .key-toggle.copper.on  { background: rgba(184,115,51,0.25); border-color: #B87333; color: #B87333; }
+  .key-toggle.copper.off { background: transparent; border-color: rgba(255,255,255,0.1); color: var(--muted); }
+  .key-toggle.jade.on    { background: rgba(0,168,107,0.25); border-color: #00A86B; color: #00A86B; }
+  .key-toggle.jade.off   { background: transparent; border-color: rgba(255,255,255,0.1); color: var(--muted); }
+  .key-toggle.crystal.on { background: rgba(0,245,255,0.25); border-color: var(--cyan); color: var(--cyan); }
+  .key-toggle.crystal.off{ background: transparent; border-color: rgba(255,255,255,0.1); color: var(--muted); }
+  .key-toggle:hover { transform: scale(1.1); }
+
+  .actions-cell { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+
+  .xp-input {
+    width: 56px;
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 5px;
+    padding: 0.3rem 0.4rem;
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    outline: none;
+    text-align: center;
+  }
+
+  .xp-input:focus { border-color: var(--gold); }
+
+  .btn-mini {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 0.35rem 0.7rem;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-mini:hover { box-shadow: 0 0 12px rgba(255,215,0,0.4); }
+  .btn-mini.danger { background: var(--red); color: white; }
+  .btn-mini.ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+  }
+  .btn-mini.ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  /* ── AWARDS TAB ── */
+  .award-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+  }
+
+  .award-pick-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .award-pick-emoji { font-size: 1.6rem; margin-bottom: 0.5rem; }
+
+  .award-pick-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+  }
+
+  .award-pick-desc {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .award-pick-select {
+    width: 100%;
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 0.5rem 0.6rem;
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    margin-bottom: 0.6rem;
+    outline: none;
+  }
+
+  .award-pick-btn {
+    width: 100%;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 0.55rem;
+    border-radius: 6px;
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .award-pick-btn:hover { box-shadow: 0 0 15px rgba(255,215,0,0.4); }
+  .award-pick-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .award-period-btn {
+    background: var(--black);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted);
+    padding: 0.35rem 0.85rem;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .award-period-btn:hover { border-color: var(--gold); color: var(--gold); }
+  .award-period-btn.active { background: var(--gold); color: var(--black); border-color: var(--gold); font-weight: 700; }
+
+  /* ── CLASS COMP TAB ── */
+  .class-comp-table { background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+  .class-comp-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr 1fr 80px;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .class-comp-row:last-child { border-bottom: none; }
+  .class-comp-row.header-row {
+    background: var(--card2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--card2);
+    border: 1px solid var(--gold);
+    color: var(--white);
+    padding: 0.8rem 1.25rem;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    box-shadow: 0 0 25px rgba(255,215,0,0.25);
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.25s;
+    pointer-events: none;
+    max-width: 320px;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+  .toast.error { border-color: var(--red); }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--black); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 800px) {
+    .student-row { grid-template-columns: 1fr; gap: 0.4rem; }
+    .student-row.header-row { display: none; }
+    .student-avatar-mini { width: 30px; height: 30px; }
+    .class-comp-row { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">THE OASIS <span>// TEACHER CONSOLE</span></div>
+    <div class="header-sub">Noblesville East Middle School — Fall 2026</div>
+  </div>
+  <button class="refresh-btn" onclick="loadAllData()">⟲ REFRESH DATA</button>
+</header>
+
+<div class="container">
+
+  <!-- STATS -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-val" id="statTotal">—</div><div class="stat-label">Total Questers</div></div>
+    <div class="stat-card"><div class="stat-val" id="statAvgXP">—</div><div class="stat-label">Avg XP</div></div>
+    <div class="stat-card"><div class="stat-val" id="statKeys">—</div><div class="stat-label">Keys Earned</div></div>
+    <div class="stat-card"><div class="stat-val" id="statPeriods">—</div><div class="stat-label">Active Periods</div></div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="students" onclick="switchTab('students')">👥 Students</button>
+    <button class="tab-btn" data-tab="awards" onclick="switchTab('awards')">🏆 Weekly Awards</button>
+    <button class="tab-btn" data-tab="classes" onclick="switchTab('classes')">📊 Class Competition</button>
+    <button class="tab-btn" data-tab="assignments" onclick="switchTab('assignments'); loadAssignments();">📋 Assignments</button>
+    <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements'); loadAnnouncement();">📢 Announcements</button>
+    <button class="tab-btn" data-tab="helpqueue" onclick="switchTab('helpqueue'); loadHelpRequests();">🆘 Help Queue</button>
+    <button class="tab-btn" data-tab="roster" onclick="switchTab('roster'); startRosterRefresh();">🔐 Roster Bridge</button>
+  </div>
+
+  <!-- STUDENTS TAB -->
+  <div class="tab-panel active" id="tab-students">
+    <div class="toolbar">
+      <input class="search-input" id="searchInput" placeholder="Search GamerTag..." oninput="renderStudents()">
+      <select class="filter-select" id="periodFilter" onchange="renderStudents()">
+        <option value="">All Periods</option>
+        <option value="1">Period 1</option>
+        <option value="2">Period 2</option>
+        <option value="3">Period 3</option>
+        <option value="4">Period 4</option>
+        <option value="5">Period 5</option>
+        <option value="6">Period 6</option>
+      </select>
+    </div>
+    <div class="student-table-wrap">
+      <div class="student-row header-row">
+        <span></span>
+        <span>GamerTag</span>
+        <span>Period</span>
+        <span>XP / Level</span>
+        <span>Keys</span>
+        <span>Spec</span>
+        <span>Actions</span>
+      </div>
+      <div id="studentList">
+        <div class="empty-state">// Loading OASIS roster...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AWARDS TAB -->
+  <div class="tab-panel" id="tab-awards">
+    <p style="color:var(--muted); font-size:0.82rem; margin-bottom:1rem;">Select a student and award this week's recognition. Each award grants +50 XP automatically.</p>
+
+    <!-- PERIOD FILTER -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap;">Filter by Period:</p>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <button class="award-period-btn active" data-period="" onclick="setAwardPeriod(this)">All</button>
+        <button class="award-period-btn" data-period="1" onclick="setAwardPeriod(this)">Period 1</button>
+        <button class="award-period-btn" data-period="2" onclick="setAwardPeriod(this)">Period 2</button>
+        <button class="award-period-btn" data-period="3" onclick="setAwardPeriod(this)">Period 3</button>
+        <button class="award-period-btn" data-period="4" onclick="setAwardPeriod(this)">Period 4</button>
+        <button class="award-period-btn" data-period="5" onclick="setAwardPeriod(this)">Period 5</button>
+        <button class="award-period-btn" data-period="6" onclick="setAwardPeriod(this)">Period 6</button>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);" id="awardPeriodCount"></span>
+    </div>
+
+    <div class="award-grid">
+      <div class="award-pick-card">
+        <div class="award-pick-emoji">🔨</div>
+        <div class="award-pick-title">Builder of the Week</div>
+        <div class="award-pick-desc">Outstanding project work</div>
+        <select class="award-pick-select" id="award-builder"><option value="">Select student...</option></select>
+        <button class="award-pick-btn" onclick="giveAward('Builder_of_the_Week','award-builder')">⚡ Award +50 XP</button>
+      </div>
+
+      <div class="award-pick-card">
+        <div class="award-pick-emoji">🐛</div>
+        <div class="award-pick-title">Debugger of the Week</div>
+        <div class="award-pick-desc">Persistence solving problems</div>
+        <select class="award-pick-select" id="award-debugger"><option value="">Select student...</option></select>
+        <button class="award-pick-btn" onclick="giveAward('Debugger_of_the_Week','award-debugger')">⚡ Award +50 XP</button>
+      </div>
+
+      <div class="award-pick-card">
+        <div class="award-pick-emoji">🧭</div>
+        <div class="award-pick-title">Explorer of the Week</div>
+        <div class="award-pick-desc">Most improved quester</div>
+        <select class="award-pick-select" id="award-explorer"><option value="">Select student...</option></select>
+        <button class="award-pick-btn" onclick="giveAward('Explorer_of_the_Week','award-explorer')">⚡ Award +50 XP</button>
+      </div>
+
+      <div class="award-pick-card">
+        <div class="award-pick-emoji">🏗️</div>
+        <div class="award-pick-title">Architect of the Week</div>
+        <div class="award-pick-desc">Outstanding teamwork</div>
+        <select class="award-pick-select" id="award-architect"><option value="">Select student...</option></select>
+        <button class="award-pick-btn" onclick="giveAward('Architect_of_the_Week','award-architect')">⚡ Award +50 XP</button>
+      </div>
+
+      <div class="award-pick-card">
+        <div class="award-pick-emoji">💡</div>
+        <div class="award-pick-title">Innovator of the Week</div>
+        <div class="award-pick-desc">Most creative solution</div>
+        <select class="award-pick-select" id="award-innovator"><option value="">Select student...</option></select>
+        <button class="award-pick-btn" onclick="giveAward('Innovator_of_the_Week','award-innovator')">⚡ Award +50 XP</button>
+      </div>
+
+      <div class="award-pick-card">
+        <div class="award-pick-emoji">🛡️</div>
+        <div class="award-pick-title">Guardian of the OASIS</div>
+        <div class="award-pick-desc">Positive culture, helping others</div>
+        <select class="award-pick-select" id="award-guardian"><option value="">Select student...</option></select>
+        <button class="award-pick-btn" onclick="giveAward('Guardian_of_the_OASIS','award-guardian')">⚡ Award +50 XP</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSES TAB -->
+  <div class="tab-panel" id="tab-classes">
+
+    <!-- CLASS XP AWARD PANEL -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">⚡ Award XP to Entire Class</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;">Give every student in a period a flat XP bonus — great for class-wide achievements like 100% completion or winning the weekly competition.</p>
+      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;">
+        <div>
+          <label style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">Class Period</label>
+          <select class="filter-select" id="classXpPeriod">
+            <option value="">Select period...</option>
+            <option value="1">Period 1</option>
+            <option value="2">Period 2</option>
+            <option value="3">Period 3</option>
+            <option value="4">Period 4</option>
+            <option value="5">Period 5</option>
+            <option value="6">Period 6</option>
+            <option value="ALL">All Periods</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">XP Amount</label>
+          <input type="number" class="search-input" id="classXpAmount" placeholder="e.g. 25" style="width:120px;">
+        </div>
+        <div>
+          <label style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">Reason (optional)</label>
+          <input type="text" class="search-input" id="classXpReason" placeholder="e.g. 100% completion" style="width:200px;">
+        </div>
+        <button class="btn-mini" style="padding:0.6rem 1.25rem;font-size:0.72rem;" onclick="awardClassXP()">⚡ Award to Class</button>
+      </div>
+      <div id="classXpPreview" style="margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);min-height:1.2em;"></div>
+    </div>
+
+    <!-- CLASS COMPETITION TABLE -->
+    <div class="class-comp-table">
+      <div class="class-comp-row header-row">
+        <span>Period</span>
+        <span>Total XP</span>
+        <span>Avg XP / Student</span>
+        <span>Completion Rate</span>
+        <span>Score</span>
+      </div>
+      <div id="classCompList">
+        <div class="empty-state">// Loading class data...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENTS TAB -->
+  <div class="tab-panel" id="tab-assignments">
+
+    <!-- NEW ASSIGNMENT FORM -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">📋 Post New Assignment</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;">Students see this when they log into their dashboard, filtered by their grade level.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label class="ab-label">Assignment Title</label>
+          <input type="text" class="search-input" id="asgTitle" placeholder="e.g. Digital Citizenship Quiz" style="width:100%;">
+        </div>
+        <div>
+          <label class="ab-label">Type</label>
+          <select class="filter-select" id="asgType" style="width:100%;">
+            <option value="Quest">⚔️ Quest</option>
+            <option value="Quiz">📝 Quiz</option>
+            <option value="Test">🧪 Test</option>
+            <option value="Project">🚀 Project</option>
+            <option value="Boss Battle">👾 Boss Battle</option>
+            <option value="Review">📖 Review</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label class="ab-label">Grade Level</label>
+          <select class="filter-select" id="asgGrade" style="width:100%;">
+            <option value="All">All Grades</option>
+            <option value="6th">6th Grade</option>
+            <option value="7th">7th Grade</option>
+            <option value="8th">8th Grade</option>
+          </select>
+        </div>
+        <div>
+          <label class="ab-label">Due Date</label>
+          <input type="date" class="search-input" id="asgDue" style="width:100%;color:var(--white);">
+        </div>
+        <div>
+          <label class="ab-label">World</label>
+          <select class="filter-select" id="asgWorld" style="width:100%;">
+            <option value="World 1">World 1 — Digital Citizenship</option>
+            <option value="World 2">World 2 — Productivity Tools</option>
+            <option value="World 3">World 3 — Web Design</option>
+            <option value="World 4">World 4 — Programming</option>
+            <option value="World 5">World 5 — Innovation Project</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-bottom:1rem;">
+        <label class="ab-label">Description (optional)</label>
+        <textarea class="search-input" id="asgDesc" placeholder="What should students know about this assignment?" style="width:100%;height:70px;resize:vertical;font-family:'Inter',sans-serif;line-height:1.5;"></textarea>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <button class="btn-mini" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="postAssignment()">📋 Post Assignment</button>
+        <span id="asgStatus" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);"></span>
+      </div>
+    </div>
+
+    <!-- ASSIGNMENT FILTERS -->
+    <div class="toolbar" style="margin-bottom:1rem;">
+      <select class="filter-select" id="asgFilterGrade" onchange="renderAssignments()">
+        <option value="">All Grades</option>
+        <option value="6th">6th Grade</option>
+        <option value="7th">7th Grade</option>
+        <option value="8th">8th Grade</option>
+        <option value="All">All Grades (shown to everyone)</option>
+      </select>
+      <select class="filter-select" id="asgFilterType" onchange="renderAssignments()">
+        <option value="">All Types</option>
+        <option value="Quest">Quest</option>
+        <option value="Quiz">Quiz</option>
+        <option value="Test">Test</option>
+        <option value="Project">Project</option>
+        <option value="Boss Battle">Boss Battle</option>
+        <option value="Review">Review</option>
+      </select>
+    </div>
+
+    <!-- ASSIGNMENT LIST -->
+    <div class="student-table-wrap">
+      <div style="display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr 100px;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--card2);font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border);">
+        <span>Assignment</span>
+        <span>Grade</span>
+        <span>Type</span>
+        <span>Due Date</span>
+        <span>Actions</span>
+      </div>
+      <div id="assignmentList">
+        <div class="empty-state">// Loading assignments...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ANNOUNCEMENTS TAB -->
+  <div class="tab-panel" id="tab-announcements">
+
+    <!-- CURRENT ANNOUNCEMENT -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">📢 Current Announcement Banner</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;">This appears as a banner at the top of the student login page. Keep it short and clear — students read it before logging in.</p>
+
+      <div id="currentAnnouncementPreview" style="background:var(--navy);border:1px solid rgba(0,245,255,0.2);border-radius:8px;padding:1rem 1.5rem;margin-bottom:1.25rem;">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--cyan);letter-spacing:0.15em;margin-bottom:0.25rem;">// CURRENT BANNER</p>
+        <p style="font-size:0.9rem;color:var(--white);" id="currentAnnouncementText">Loading...</p>
+      </div>
+
+      <!-- NEW ANNOUNCEMENT FORM -->
+      <div style="margin-bottom:1rem;">
+        <label class="ab-label">New Announcement</label>
+        <textarea class="search-input" id="announcementInput" placeholder="e.g. Boss Battle for World 1 is this Friday! Make sure you've completed all quests." style="width:100%;height:80px;resize:vertical;font-family:'Inter',sans-serif;line-height:1.6;font-size:0.85rem;"></textarea>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+        <div>
+          <label class="ab-label">Label (optional)</label>
+          <input type="text" class="search-input" id="announcementLabel" placeholder="e.g. BOSS BATTLE ALERT" style="width:100%;">
+        </div>
+        <div>
+          <label class="ab-label">Type</label>
+          <select class="filter-select" id="announcementType" style="width:100%;">
+            <option value="info">ℹ️ Info</option>
+            <option value="alert">⚠️ Alert</option>
+            <option value="celebration">🎉 Celebration</option>
+            <option value="reminder">🔔 Reminder</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <button class="btn-mini" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="postAnnouncement()">📢 Post Announcement</button>
+        <button class="btn-mini ghost" onclick="clearAnnouncement()">Clear Banner</button>
+        <span id="announcementStatus" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);"></span>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENT HISTORY -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:700;color:var(--muted);letter-spacing:0.1em;margin-bottom:1rem;">// RECENT ANNOUNCEMENTS</p>
+      <div id="announcementHistory">
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// History will appear here</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- HELP QUEUE TAB -->
+  <div class="tab-panel" id="tab-helpqueue">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
+      <div>
+        <p style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.2rem;">🆘 Anonymous Help Queue</p>
+        <p style="font-size:0.75rem;color:var(--muted);">Students send these from their dashboard when they need help. You can see who asked, which assignment, and exactly what they're struggling with.</p>
+      </div>
+      <button class="refresh-btn" onclick="loadHelpRequests()">⟲ Refresh</button>
+    </div>
+
+    <div class="student-table-wrap">
+      <div style="display:grid;grid-template-columns:0.7fr 0.6fr 1.6fr 0.5fr 80px;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--card2);font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border);">
+        <span>Assignment</span>
+        <span>Student</span>
+        <span>What They're Struggling With</span>
+        <span>Date</span>
+        <span>Action</span>
+      </div>
+      <div id="helpQueueList">
+        <div class="empty-state">// Loading help requests...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROSTER BRIDGE TAB -->
+  <div class="tab-panel" id="tab-roster">
+
+    <!-- HEADER INFO -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.3rem;">🔐 Real Name ↔ GamerTag Bridge</p>
+          <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;max-width:560px;">Match your real student roster to their OASIS identities. This saves to your <strong style="color:var(--white);">private Roster Sheet</strong> — never visible on the public site. Use on day one as students register, with your seating chart in hand.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.5rem;">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);" id="rosterRefreshStatus">// Auto-refreshes every 30s</div>
+          <button class="refresh-btn" onclick="loadRosterData()">⟲ Refresh Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER TOOLBAR -->
+    <div class="toolbar" style="margin-bottom:1rem;">
+      <input class="search-input" id="rosterSearch" placeholder="Search GamerTag or real name..." oninput="renderRosterTable()">
+      <select class="filter-select" id="rosterPeriodFilter" onchange="renderRosterTable()">
+        <option value="">All Periods</option>
+        <option value="1">Period 1</option>
+        <option value="2">Period 2</option>
+        <option value="3">Period 3</option>
+        <option value="4">Period 4</option>
+        <option value="5">Period 5</option>
+        <option value="6">Period 6</option>
+      </select>
+      <select class="filter-select" id="rosterStatusFilter" onchange="renderRosterTable()">
+        <option value="">All Students</option>
+        <option value="mapped">✅ Mapped</option>
+        <option value="unmapped">⚠️ Not Yet Mapped</option>
+      </select>
+    </div>
+
+    <!-- ROSTER TABLE -->
+    <div class="student-table-wrap">
+      <div style="display:grid;grid-template-columns:44px 1fr 0.6fr 0.8fr 1fr 80px;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--card2);font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border);">
+        <span></span>
+        <span>GamerTag</span>
+        <span>Period</span>
+        <span>OASIS ID</span>
+        <span>Real Name</span>
+        <span></span>
+      </div>
+      <div id="rosterList">
+        <div class="empty-state">// Click the Roster Bridge tab to load students</div>
+      </div>
+    </div>
+
+    <!-- UNMAPPED COUNTER -->
+    <div style="margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);text-align:right;" id="rosterCounter"></div>
+
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── CONFIG ──
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOI27hEji_0rod_zb1f83mpGtX-oVHPcsvrUa4V5QP2rnuOUjljXdzGJrYdxG0ZomOIw/exec';
+
+  let allStudents = [];
+  let allClasses = [];
+
+  // ── TOAST ──
+  function showToast(msg, isError) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', !!isError);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── LOAD DATA ──
+  let rosterMap = {}; // GamerTag → Real_Name
+
+  async function loadAllData() {
+    document.getElementById('studentList').innerHTML = '<div class="empty-state">// Loading OASIS roster...</div>';
+    try {
+      // Load student data and roster in parallel
+      const [dataRes, rosterRes] = await Promise.all([
+        fetch(APPS_SCRIPT_URL),
+        fetch(`${APPS_SCRIPT_URL}?action=getRoster`)
+      ]);
+      const data       = await dataRes.json();
+      const rosterData = await rosterRes.json();
+
+      allStudents = (data.students || []).filter(s => s.GamerTag && s.GamerTag.trim() !== '');
+      allClasses  = (data.classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
+
+      // Build GamerTag → Real_Name map
+      rosterMap = {};
+      (rosterData.roster || []).forEach(r => {
+        if (r.GamerTag && r.Real_Name) rosterMap[r.GamerTag] = r.Real_Name;
+      });
+
+      renderStats();
+      renderStudents();
+      renderAwardSelects();
+      renderClassComp();
+      if (document.getElementById('tab-roster')?.classList.contains('active')) renderRosterTable();
+      showToast('// Data refreshed');
+    } catch (e) {
+      document.getElementById('studentList').innerHTML = '<div class="empty-state">// Could not load data. Check your connection.</div>';
+      showToast('// Failed to load data', true);
+    }
+  }
+
+  // Helper: get display name — real name if mapped, GamerTag otherwise
+  function displayName(gamerTag) {
+    const real = rosterMap[gamerTag];
+    return real ? `${real}` : gamerTag || '—';
+  }
+
+  function displayNameWithTag(gamerTag) {
+    const real = rosterMap[gamerTag];
+    return real
+      ? `<span style="font-weight:600;">${escapeHtml(real)}</span><br><span style="font-size:0.6rem;color:var(--muted);font-family:'JetBrains Mono',monospace;">${escapeHtml(gamerTag)}</span>`
+      : `<span style="font-family:'Orbitron',sans-serif;font-size:0.75rem;">${escapeHtml(gamerTag||'—')}</span>`;
+  }
+
+  function renderStats() {
+    const total = allStudents.length;
+    const avgXP = total ? Math.round(allStudents.reduce((sum,s) => sum + (Number(s.Current_XP)||0), 0) / total) : 0;
+    const keysTotal = allStudents.reduce((sum,s) => {
+      let c = 0;
+      if (s.Copper_Key === true || s.Copper_Key === 'TRUE') c++;
+      if (s.Jade_Key === true || s.Jade_Key === 'TRUE') c++;
+      if (s.Crystal_Key === true || s.Crystal_Key === 'TRUE') c++;
+      return sum + c;
+    }, 0);
+    const periods = new Set(allStudents.map(s => String(s.Class_Period))).size;
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statAvgXP').textContent = avgXP;
+    document.getElementById('statKeys').textContent = keysTotal;
+    document.getElementById('statPeriods').textContent = periods;
+  }
+
+  // ── STUDENTS TABLE ──
+  function renderStudents() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const periodFilter = document.getElementById('periodFilter').value;
+    const list = document.getElementById('studentList');
+
+    let filtered = allStudents.filter(s => {
+      const realName = (rosterMap[s.GamerTag] || '').toLowerCase();
+      const matchesSearch = !search ||
+        s.GamerTag.toLowerCase().includes(search) ||
+        realName.includes(search);
+      const matchesPeriod = !periodFilter || String(s.Class_Period) === periodFilter;
+      return matchesSearch && matchesPeriod;
+    });
+
+    filtered.sort((a,b) => (Number(b.Current_XP)||0) - (Number(a.Current_XP)||0));
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="empty-state">// No questers match your search</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(s => {
+      const xp = Number(s.Current_XP) || 0;
+      const level = Number(s.Current_Level) || 1;
+      const copper  = s.Copper_Key  === true || s.Copper_Key  === 'TRUE';
+      const jade    = s.Jade_Key    === true || s.Jade_Key    === 'TRUE';
+      const crystal = s.Crystal_Key === true || s.Crystal_Key === 'TRUE';
+      const id = s.OASIS_ID || '';
+      const realName = rosterMap[s.GamerTag] || '';
+
+      return `
+        <div class="student-row">
+          <div class="student-avatar-mini"><canvas width="34" height="34" data-avatar="${escapeAttr(s.Avatar_String||'')}"></canvas></div>
+          <div class="student-name-cell">
+            ${realName ? `<div class="tag">${escapeHtml(realName)}</div>` : ''}
+            <div class="${realName ? 'id' : 'tag'}">${escapeHtml(s.GamerTag)}</div>
+            <div class="id">${id}</div>
+          </div>
+          <div><span class="period-badge">P${s.Class_Period}</span></div>
+          <div class="xp-cell">
+            <span class="xp-val">${xp.toLocaleString()} XP</span>
+            <span style="color:var(--muted);font-size:0.65rem;">Lv${level}</span>
+          </div>
+          <div class="keys-cell">
+            <div class="key-toggle copper ${copper?'on':'off'}" onclick="toggleKey('${id}','Copper_Key',${!copper})" title="Copper Key">C</div>
+            <div class="key-toggle jade ${jade?'on':'off'}" onclick="toggleKey('${id}','Jade_Key',${!jade})" title="Jade Key">J</div>
+            <div class="key-toggle crystal ${crystal?'on':'off'}" onclick="toggleKey('${id}','Crystal_Key',${!crystal})" title="Crystal Key">X</div>
+          </div>
+          <div style="font-size:0.72rem;color:var(--muted);">${escapeHtml(s.Specialization||'')}</div>
+          <div class="actions-cell">
+            <input type="number" class="xp-input" placeholder="±XP" id="xpinput-${id}">
+            <button class="btn-mini" onclick="adjustXP('${id}')">Apply</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Draw mini avatars
+    document.querySelectorAll('[data-avatar]').forEach(canvas => {
+      drawMiniAvatar(canvas, canvas.dataset.avatar);
+    });
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+  function escapeAttr(str) { return String(str).replace(/"/g,'&quot;'); }
+
+  // ── MINI AVATAR DRAW (simplified version of the builder's renderer) ──
+  function drawMiniAvatar(canvas, str) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,34,34);
+    if (!str) { ctx.fillStyle = '#1A1A2E'; ctx.fillRect(0,0,34,34); return; }
+    const parts = {};
+    str.split('|').forEach(p => { const [k,v] = p.split(':'); parts[k]=v; });
+    const skin = parts.skin || '#FDBCB4';
+    const accent = parts.accent || parts.color || '#FFD700';
+    const hairColor = parts.haircolor || '#2C1810';
+    const outfitIdx = parseInt(parts.outfit) || 0;
+    const outfitColors = ['#1A6B3C','#4A1A7A','#1A1A1A','#1A3A6B','#7A1A1A','#1A5A5A','#6B3A1A','#2A2A4A'];
+
+    ctx.fillStyle = accent + '22';
+    ctx.beginPath(); ctx.arc(17,18,15,0,Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = outfitColors[outfitIdx] || '#1A6B3C';
+    ctx.beginPath(); ctx.ellipse(17,29,9,8,0,0,Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = skin;
+    ctx.beginPath(); ctx.ellipse(17,15,7,8,0,0,Math.PI*2); ctx.fill();
+
+    ctx.fillStyle = hairColor;
+    ctx.beginPath(); ctx.ellipse(17,10,7,5,0,Math.PI,Math.PI*2); ctx.fill();
+    ctx.fillRect(10,10,14,3);
+
+    ctx.fillStyle = '#1A1A2E';
+    ctx.beginPath(); ctx.arc(14,15,1.3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(20,15,1.3,0,Math.PI*2); ctx.fill();
+  }
+
+  // ── ACTIONS: XP ──
+  async function adjustXP(oasisId) {
+    const input = document.getElementById('xpinput-' + oasisId);
+    const delta = parseInt(input.value);
+    if (!delta || isNaN(delta)) { showToast('// Enter a valid XP amount', true); return; }
+
+    try {
+      const params = new URLSearchParams({ action: 'updateXP', OASIS_ID: oasisId, Delta: delta });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        showToast(`// ${delta > 0 ? '+' : ''}${delta} XP applied`);
+        input.value = '';
+        loadAllData();
+      } else {
+        showToast('// ' + (result.error || 'Update failed'), true);
+      }
+    } catch (e) {
+      showToast('// Connection error', true);
+    }
+  }
+
+  // ── ACTIONS: KEYS ──
+  async function toggleKey(oasisId, keyName, newValue) {
+    try {
+      const params = new URLSearchParams({ action: 'toggleKey', OASIS_ID: oasisId, Key: keyName, Value: newValue });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        showToast(`// ${keyName.replace('_',' ')} ${newValue ? 'awarded' : 'removed'}`);
+        loadAllData();
+      } else {
+        showToast('// ' + (result.error || 'Update failed'), true);
+      }
+    } catch (e) {
+      showToast('// Connection error', true);
+    }
+  }
+
+  // ── AWARDS ──
+  let currentAwardPeriod = '';
+
+  function setAwardPeriod(btn) {
+    document.querySelectorAll('.award-period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentAwardPeriod = btn.dataset.period;
+    renderAwardSelects();
+  }
+
+  function renderAwardSelects() {
+    const selects = document.querySelectorAll('.award-pick-select');
+
+    // Filter by selected period
+    let filtered = currentAwardPeriod
+      ? allStudents.filter(s => String(s.Class_Period) === currentAwardPeriod)
+      : allStudents;
+
+    // Sort by real name if available, otherwise GamerTag
+    filtered = [...filtered].sort((a,b) => {
+      const aName = rosterMap[a.GamerTag] || a.GamerTag;
+      const bName = rosterMap[b.GamerTag] || b.GamerTag;
+      return aName.localeCompare(bName);
+    });
+
+    // Update count badge
+    const countEl = document.getElementById('awardPeriodCount');
+    if (countEl) {
+      countEl.textContent = currentAwardPeriod
+        ? `// ${filtered.length} student${filtered.length !== 1 ? 's' : ''} in Period ${currentAwardPeriod}`
+        : `// ${filtered.length} total students`;
+    }
+
+    selects.forEach(sel => {
+      const current = sel.value;
+      sel.innerHTML = '<option value="">Select student...</option>' +
+        filtered.map(s => {
+          const realName = rosterMap[s.GamerTag];
+          const label = realName
+            ? `${realName} (${s.GamerTag})${!currentAwardPeriod ? ' — P'+s.Class_Period : ''}`
+            : `${s.GamerTag}${!currentAwardPeriod ? ' — P'+s.Class_Period : ''}`;
+          return `<option value="${s.OASIS_ID}">${escapeHtml(label)}</option>`;
+        }).join('');
+      // Restore previous selection if still valid
+      if (current && sel.querySelector(`option[value="${current}"]`)) sel.value = current;
+    });
+  }
+
+  async function giveAward(achievementType, selectId) {
+    const sel = document.getElementById(selectId);
+    const oasisId = sel.value;
+    if (!oasisId) { showToast('// Select a student first', true); return; }
+
+    try {
+      const params = new URLSearchParams({
+        action: 'awardAchievement',
+        OASIS_ID: oasisId,
+        Achievement_Type: achievementType,
+        Season: 'Fall_2026'
+      });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        showToast(`// 🏆 ${achievementType.replace(/_/g,' ')} awarded!`);
+        sel.value = '';
+        loadAllData();
+      } else {
+        showToast('// ' + (result.error || 'Award failed'), true);
+      }
+    } catch (e) {
+      showToast('// Connection error', true);
+    }
+  }
+
+  // ── CLASS COMPETITION ──
+  function renderClassComp() {
+    const list = document.getElementById('classCompList');
+    if (allClasses.length === 0) {
+      list.innerHTML = '<div class="empty-state">// No class data yet — paste Gemini\'s weekly output into Class_Competition_Export</div>';
+      return;
+    }
+
+    const scored = allClasses.map(c => {
+      const avgXP = Number(c.Average_XP_Per_Student) || 0;
+      const completionNum = parseFloat(c.Quest_Completion_Rate) || 0;
+      const score = (avgXP * 0.6) + (completionNum * 0.4);
+      return { ...c, avgXP, completionNum, score };
+    }).sort((a,b) => b.score - a.score);
+
+    const now = new Date();
+    const timestamp = `${now.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'})} at ${now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+
+    list.innerHTML = `
+      <div class="class-comp-row" style="background:rgba(255,215,0,0.04);">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);grid-column:1/-1;">
+          // Last updated: ${timestamp} &nbsp;·&nbsp; Score = (Avg XP × 0.6) + (Completion % × 0.4)
+        </span>
+      </div>` +
+      scored.map((c, i) => {
+        const isWinner = i === 0 && c.score > 0;
+        return `
+          <div class="class-comp-row" style="${isWinner?'background:rgba(255,215,0,0.04);':''}">
+            <span class="period-badge">${isWinner?'👑 ':''}Period ${c.Class_Period}</span>
+            <span class="xp-val">${(Number(c.Total_XP)||0).toLocaleString()} XP</span>
+            <span style="color:var(--cyan);">${c.avgXP} XP avg</span>
+            <span style="color:var(--green);">${c.Quest_Completion_Rate || '0%'}</span>
+            <span style="color:${isWinner?'var(--gold)':'var(--white)'};font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:600;">${c.score.toFixed(1)} pts</span>
+          </div>`;
+      }).join('');
+  }
+
+  // ── CLASS XP AWARD ──
+  function updateClassXpPreview() {
+    const period = document.getElementById('classXpPeriod').value;
+    const amount = parseInt(document.getElementById('classXpAmount').value) || 0;
+    const preview = document.getElementById('classXpPreview');
+    if (!period || !amount) { preview.textContent = ''; return; }
+    const targets = period === 'ALL'
+      ? allStudents
+      : allStudents.filter(s => String(s.Class_Period) === period);
+    const reason = document.getElementById('classXpReason').value.trim();
+    preview.textContent = `// Will award +${amount} XP to ${targets.length} student${targets.length !== 1 ? 's' : ''}${reason ? ' for "' + reason + '"' : ''}`;
+    preview.style.color = targets.length > 0 ? 'var(--green)' : 'var(--red)';
+  }
+
+  async function awardClassXP() {
+    const period = document.getElementById('classXpPeriod').value;
+    const amount = parseInt(document.getElementById('classXpAmount').value);
+    const preview = document.getElementById('classXpPreview');
+
+    if (!period) { showToast('// Select a class period first', true); return; }
+    if (!amount || isNaN(amount)) { showToast('// Enter a valid XP amount', true); return; }
+
+    const targets = period === 'ALL'
+      ? allStudents
+      : allStudents.filter(s => String(s.Class_Period) === period);
+
+    if (targets.length === 0) { showToast('// No students found in that period', true); return; }
+
+    const confirmed = confirm(`Award +${amount} XP to all ${targets.length} students in ${period === 'ALL' ? 'ALL periods' : 'Period ' + period}?`);
+    if (!confirmed) return;
+
+    preview.textContent = `// Awarding XP to ${targets.length} students...`;
+    preview.style.color = 'var(--cyan)';
+
+    let successCount = 0;
+    let failCount = 0;
+
+    // Fire all requests in parallel for speed
+    await Promise.all(targets.map(async s => {
+      try {
+        const params = new URLSearchParams({ action: 'updateXP', OASIS_ID: s.OASIS_ID, Delta: amount });
+        const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+        const result = await res.json();
+        if (result.success) successCount++;
+        else failCount++;
+      } catch (e) {
+        failCount++;
+      }
+    }));
+
+    if (failCount === 0) {
+      showToast(`// ⚡ +${amount} XP awarded to ${successCount} students!`);
+      preview.textContent = `// Done! ${successCount} students updated successfully.`;
+      preview.style.color = 'var(--green)';
+    } else {
+      showToast(`// ${successCount} succeeded, ${failCount} failed`, true);
+      preview.textContent = `// ${successCount} succeeded, ${failCount} failed — refresh and try again.`;
+      preview.style.color = 'var(--red)';
+    }
+
+    // Clear inputs and reload
+    document.getElementById('classXpAmount').value = '';
+    document.getElementById('classXpReason').value = '';
+    document.getElementById('classXpPeriod').value = '';
+    loadAllData();
+  }
+
+  // Hook up live preview on input changes
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('classXpPeriod').addEventListener('change', updateClassXpPreview);
+    document.getElementById('classXpAmount').addEventListener('input', updateClassXpPreview);
+    document.getElementById('classXpReason').addEventListener('input', updateClassXpPreview);
+  });
+
+  // ── ASSIGNMENTS ──
+  let allAssignments = [];
+
+  const typeEmoji = { 'Quest':'⚔️','Quiz':'📝','Test':'🧪','Project':'🚀','Boss Battle':'👾','Review':'📖' };
+  const typeColor = { 'Quest':'var(--cyan)','Quiz':'#FFB347','Test':'var(--red)','Project':'var(--purple)','Boss Battle':'var(--gold)','Review':'var(--muted)' };
+
+  async function loadAssignments() {
+    document.getElementById('assignmentList').innerHTML = '<div class="empty-state">// Loading assignments...</div>';
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAssignments`);
+      const data = await res.json();
+      allAssignments = data.assignments || [];
+      renderAssignments();
+    } catch (e) {
+      allAssignments = [];
+      renderAssignments();
+    }
+  }
+
+  function renderAssignments() {
+    const list = document.getElementById('assignmentList');
+    const gradeFilter = document.getElementById('asgFilterGrade')?.value || '';
+    const typeFilter  = document.getElementById('asgFilterType')?.value || '';
+
+    let filtered = allAssignments.filter(a => {
+      const matchGrade = !gradeFilter || a.Grade === gradeFilter;
+      const matchType  = !typeFilter  || a.Type  === typeFilter;
+      return matchGrade && matchType;
+    });
+
+    // Sort by due date ascending
+    filtered.sort((a,b) => new Date(a.Due_Date) - new Date(b.Due_Date));
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="empty-state">// No assignments yet — post one above</div>';
+      return;
+    }
+
+    const today = new Date(); today.setHours(0,0,0,0);
+
+    list.innerHTML = filtered.map(a => {
+      const due = a.Due_Date ? new Date(a.Due_Date) : null;
+      const isPast = due && due < today;
+      const isToday = due && due.toDateString() === today.toDateString();
+      const isSoon = due && !isPast && !isToday && (due - today) <= 3 * 86400000;
+      const dueFmt = due ? due.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'}) : '—';
+      const dueColor = isPast ? 'var(--muted)' : isToday ? 'var(--red)' : isSoon ? '#FFB347' : 'var(--green)';
+
+      return `
+        <div style="display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr 100px;align-items:center;gap:0.75rem;padding:0.85rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);${isPast?'opacity:0.5':''}">
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:600;color:var(--white);">${escapeHtml(a.Title||'')}</div>
+            ${a.Description ? `<div style="font-size:0.68rem;color:var(--muted);margin-top:0.15rem;">${escapeHtml(a.Description)}</div>` : ''}
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.15rem;">${a.World||''}</div>
+          </div>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--cyan);">${a.Grade||'All'}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:${typeColor[a.Type]||'var(--white)'};">${typeEmoji[a.Type]||''} ${a.Type||''}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:${dueColor};">${dueFmt}${isToday?' ⚠ TODAY':''}${isSoon?' 🔔 SOON':''}</span>
+          <button class="btn-mini danger" onclick="deleteAssignment('${a.ID||''}')">Delete</button>
+        </div>`;
+    }).join('');
+  }
+
+  async function postAssignment() {
+    const title = document.getElementById('asgTitle').value.trim();
+    const type  = document.getElementById('asgType').value;
+    const grade = document.getElementById('asgGrade').value;
+    const due   = document.getElementById('asgDue').value;
+    const world = document.getElementById('asgWorld').value;
+    const desc  = document.getElementById('asgDesc').value.trim();
+    const status = document.getElementById('asgStatus');
+
+    if (!title) { showToast('// Enter an assignment title', true); return; }
+    if (!due)   { showToast('// Pick a due date', true); return; }
+
+    status.textContent = '// Posting...';
+    try {
+      const id = 'ASG-' + Date.now();
+      const params = new URLSearchParams({ action:'saveAssignment', ID:id, Title:title, Type:type, Grade:grade, Due_Date:due, World:world, Description:desc, Season:'Fall_2026' });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        showToast(`// ✅ "${title}" posted`);
+        status.textContent = '';
+        document.getElementById('asgTitle').value = '';
+        document.getElementById('asgDesc').value = '';
+        document.getElementById('asgDue').value = '';
+        loadAssignments();
+      } else {
+        status.textContent = '// ' + (result.error || 'Failed');
+      }
+    } catch (e) {
+      status.textContent = '// Connection error';
+      showToast('// Could not post assignment', true);
+    }
+  }
+
+  async function deleteAssignment(id) {
+    if (!id || !confirm('Delete this assignment?')) return;
+    try {
+      const params = new URLSearchParams({ action:'deleteAssignment', ID:id });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) { showToast('// Assignment deleted'); loadAssignments(); }
+      else showToast('// ' + (result.error||'Delete failed'), true);
+    } catch (e) { showToast('// Connection error', true); }
+  }
+
+  // ── ANNOUNCEMENTS ──
+  let currentAnnouncement = null;
+
+  const announcementColors = { 'info':'rgba(0,245,255,0.15)','alert':'rgba(255,71,87,0.15)','celebration':'rgba(0,255,136,0.15)','reminder':'rgba(255,179,71,0.15)' };
+  const announcementBorders = { 'info':'rgba(0,245,255,0.4)','alert':'rgba(255,71,87,0.4)','celebration':'rgba(0,255,136,0.4)','reminder':'rgba(255,179,71,0.4)' };
+  const announcementEmoji = { 'info':'ℹ️','alert':'⚠️','celebration':'🎉','reminder':'🔔' };
+
+  async function loadAnnouncement() {
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAnnouncement`);
+      const data = await res.json();
+      currentAnnouncement = data.announcement || null;
+      renderAnnouncementPreview();
+    } catch (e) {
+      document.getElementById('currentAnnouncementText').textContent = '// No active announcement';
+    }
+  }
+
+  function renderAnnouncementPreview() {
+    const el = document.getElementById('currentAnnouncementText');
+    if (!currentAnnouncement || !currentAnnouncement.Text) {
+      el.textContent = '// No active announcement — post one below to have it appear on the student page';
+      return;
+    }
+    el.textContent = `${announcementEmoji[currentAnnouncement.Type]||'📢'} ${currentAnnouncement.Label ? '['+currentAnnouncement.Label+'] ' : ''}${currentAnnouncement.Text}`;
+  }
+
+  async function postAnnouncement() {
+    const text   = document.getElementById('announcementInput').value.trim();
+    const label  = document.getElementById('announcementLabel').value.trim();
+    const type   = document.getElementById('announcementType').value;
+    const status = document.getElementById('announcementStatus');
+
+    if (!text) { showToast('// Enter announcement text', true); return; }
+
+    status.textContent = '// Posting...';
+    try {
+      const params = new URLSearchParams({ action:'saveAnnouncement', Text:text, Label:label, Type:type, Date:new Date().toISOString().split('T')[0] });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        showToast('// 📢 Announcement posted!');
+        status.textContent = '';
+        document.getElementById('announcementInput').value = '';
+        document.getElementById('announcementLabel').value = '';
+        loadAnnouncement();
+      } else {
+        status.textContent = '// ' + (result.error||'Failed');
+      }
+    } catch (e) {
+      status.textContent = '// Connection error';
+      showToast('// Could not post announcement', true);
+    }
+  }
+
+  async function clearAnnouncement() {
+    if (!confirm('Clear the current announcement banner?')) return;
+    try {
+      const params = new URLSearchParams({ action:'saveAnnouncement', Text:'', Label:'', Type:'info', Date:'' });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) { showToast('// Banner cleared'); currentAnnouncement = null; renderAnnouncementPreview(); }
+    } catch (e) { showToast('// Connection error', true); }
+  }
+
+  // ── HELP QUEUE ──
+  async function loadHelpRequests() {
+    const list = document.getElementById('helpQueueList');
+    list.innerHTML = '<div class="empty-state">// Loading...</div>';
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getHelpRequests`);
+      const data = await res.json();
+      const requests = (data.help_requests || []).filter(r => {
+        const resolved = r.Resolved;
+        // Handle boolean false, string "FALSE", string "false", or empty
+        return r.Comment && (resolved === false || resolved === 'FALSE' || resolved === 'false' || resolved === '' || resolved === undefined);
+      });
+
+      if (requests.length === 0) {
+        list.innerHTML = '<div class="empty-state">// No open help requests — all clear! ✅</div>';
+        return;
+      }
+
+      // Update tab badge
+      const tabBtn = document.querySelector('[data-tab="helpqueue"]');
+      if (tabBtn) tabBtn.textContent = `🆘 Help Queue (${requests.length})`;
+
+      list.innerHTML = requests.map((r, i) => {
+        const realName = rosterMap[r.GamerTag] || '';
+        return `
+        <div style="display:grid;grid-template-columns:0.7fr 0.6fr 1.6fr 0.5fr 80px;align-items:start;gap:0.75rem;padding:0.85rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);">
+          <div>
+            <p style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:600;color:var(--white);">${escapeHtml(r.Assignment_Title||'Unknown')}</p>
+            <p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.15rem;">${escapeHtml(r.Assignment_ID||'')}</p>
+          </div>
+          <div>
+            ${realName
+              ? `<p style="font-size:0.78rem;font-weight:600;color:var(--white);">${escapeHtml(realName)}</p>
+                 <p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.1rem;">${escapeHtml(r.GamerTag||'')}</p>`
+              : `<p style="font-family:'Orbitron',sans-serif;font-size:0.72rem;font-weight:600;color:var(--cyan);">${escapeHtml(r.GamerTag||'Unknown')}</p>`
+            }
+          </div>
+          <p style="font-size:0.78rem;color:var(--white);line-height:1.5;">${escapeHtml(r.Comment||'')}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);">${r.Date||'—'}</p>
+          <button class="btn-mini" onclick="resolveHelpRequest('${r.ID||i}', this)">✅ Resolve</button>
+        </div>`; }).join('');
+    } catch(e) {
+      list.innerHTML = '<div class="empty-state">// Could not load help requests</div>';
+    }
+  }
+
+  async function resolveHelpRequest(id, btn) {
+    btn.textContent = '...';
+    btn.disabled = true;
+    try {
+      const params = new URLSearchParams({ action:'resolveHelpRequest', ID:id });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) { showToast('// Help request resolved ✅'); loadHelpRequests(); }
+      else { showToast('// ' + (result.error||'Failed'), true); btn.textContent = '✅ Resolve'; btn.disabled = false; }
+    } catch(e) { showToast('// Connection error', true); btn.textContent = '✅ Resolve'; btn.disabled = false; }
+  }
+
+  // ── ROSTER BRIDGE ──
+  let rosterData = {}; // OASIS_ID -> real name, loaded from private sheet
+  let rosterRefreshTimer = null;
+  let pendingSaves = {}; // track unsaved changes
+
+  async function loadRosterData() {
+    const status = document.getElementById('rosterRefreshStatus');
+    if (status) status.textContent = '// Refreshing...';
+
+    try {
+      // If allStudents isn't loaded yet, load it first
+      if (allStudents.length === 0) {
+        await loadAllData();
+      }
+
+      // Load existing roster mappings from private sheet
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getRoster`);
+      const data = await res.json();
+      if (data.roster) {
+        rosterData = {};
+        data.roster.forEach(r => {
+          if (r.OASIS_ID) rosterData[r.OASIS_ID] = r.Real_Name || '';
+        });
+      }
+    } catch (e) {
+      rosterData = {};
+    }
+
+    renderRosterTable();
+    const now = new Date();
+    if (status) status.textContent = `// Last refreshed: ${now.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'})}`;
+  }
+
+  function startRosterRefresh() {
+    loadRosterData();
+    // Auto-refresh every 30 seconds to catch new registrations
+    if (rosterRefreshTimer) clearInterval(rosterRefreshTimer);
+    rosterRefreshTimer = setInterval(loadRosterData, 30000);
+  }
+
+  function stopRosterRefresh() {
+    if (rosterRefreshTimer) { clearInterval(rosterRefreshTimer); rosterRefreshTimer = null; }
+  }
+
+  function renderRosterTable() {
+    const list = document.getElementById('rosterList');
+    const search = (document.getElementById('rosterSearch')?.value || '').toLowerCase();
+    const period = document.getElementById('rosterPeriodFilter')?.value || '';
+    const status = document.getElementById('rosterStatusFilter')?.value || '';
+
+    let filtered = allStudents.filter(s => {
+      if (!s.GamerTag || !s.GamerTag.trim()) return false;
+      const realName = rosterData[s.OASIS_ID] || '';
+      const isMapped = realName.trim() !== '';
+      const matchSearch = !search ||
+        s.GamerTag.toLowerCase().includes(search) ||
+        realName.toLowerCase().includes(search);
+      const matchPeriod = !period || String(s.Class_Period) === period;
+      const matchStatus = !status ||
+        (status === 'mapped' && isMapped) ||
+        (status === 'unmapped' && !isMapped);
+      return matchSearch && matchPeriod && matchStatus;
+    });
+
+    // Sort: unmapped first (most urgent on day one), then by period
+    filtered.sort((a,b) => {
+      const aMapped = !!(rosterData[a.OASIS_ID] || '').trim();
+      const bMapped = !!(rosterData[b.OASIS_ID] || '').trim();
+      if (aMapped !== bMapped) return aMapped ? 1 : -1;
+      return Number(a.Class_Period) - Number(b.Class_Period);
+    });
+
+    const unmappedCount = allStudents.filter(s => s.GamerTag && !(rosterData[s.OASIS_ID] || '').trim()).length;
+    const counter = document.getElementById('rosterCounter');
+    if (counter) {
+      counter.textContent = unmappedCount > 0
+        ? `// ⚠️ ${unmappedCount} student${unmappedCount !== 1 ? 's' : ''} not yet mapped`
+        : allStudents.length > 0 ? '// ✅ All students mapped!' : '';
+      counter.style.color = unmappedCount > 0 ? '#FFB347' : 'var(--green)';
+    }
+
+    if (filtered.length === 0) {
+      list.innerHTML = '<div class="empty-state">// No students match your filters</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(s => {
+      const realName = rosterData[s.OASIS_ID] || '';
+      const isMapped = realName.trim() !== '';
+      const hasPending = pendingSaves[s.OASIS_ID] !== undefined;
+
+      return `
+        <div style="display:grid;grid-template-columns:44px 1fr 0.6fr 0.8fr 1fr 80px;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.15s;"
+          onmouseover="this.style.background='rgba(255,215,0,0.02)'" onmouseout="this.style.background=''">
+          <div style="width:10px;height:10px;border-radius:50%;background:${isMapped?'var(--green)':'#FFB347'};box-shadow:0 0 6px ${isMapped?'var(--green)':'#FFB347'};margin:auto;"></div>
+          <div>
+            <div style="font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:600;color:var(--white);">${escapeHtml(s.GamerTag)}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);margin-top:0.1rem;">${s.Specialization || ''}</div>
+          </div>
+          <span class="period-badge">P${s.Class_Period}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);">${s.OASIS_ID}</span>
+          <input
+            type="text"
+            class="search-input"
+            style="padding:0.4rem 0.6rem;font-size:0.78rem;border-color:${hasPending?'var(--gold)':'rgba(255,255,255,0.1)'};"
+            placeholder="Enter real name..."
+            value="${escapeHtml(realName)}"
+            id="name-${s.OASIS_ID}"
+            oninput="markPending('${s.OASIS_ID}')"
+            onkeydown="if(event.key==='Enter') saveRosterEntry('${s.OASIS_ID}')"
+          >
+          <button class="btn-mini" onclick="saveRosterEntry('${s.OASIS_ID}')" id="savebtn-${s.OASIS_ID}"
+            style="opacity:${hasPending?'1':'0.4'};">
+            Save
+          </button>
+        </div>`;
+    }).join('');
+  }
+
+  function markPending(oasisId) {
+    const input = document.getElementById(`name-${oasisId}`);
+    const btn = document.getElementById(`savebtn-${oasisId}`);
+    if (input) {
+      pendingSaves[oasisId] = input.value;
+      input.style.borderColor = 'var(--gold)';
+    }
+    if (btn) btn.style.opacity = '1';
+  }
+
+  async function saveRosterEntry(oasisId) {
+    const input = document.getElementById(`name-${oasisId}`);
+    const btn = document.getElementById(`savebtn-${oasisId}`);
+    if (!input) return;
+
+    const realName = input.value.trim();
+    if (!realName) { showToast('// Enter a real name first', true); return; }
+
+    const student = allStudents.find(s => s.OASIS_ID === oasisId);
+    if (!student) return;
+
+    if (btn) { btn.textContent = '...'; btn.disabled = true; }
+
+    try {
+      const params = new URLSearchParams({
+        action: 'saveRosterEntry',
+        OASIS_ID: oasisId,
+        GamerTag: student.GamerTag,
+        Real_Name: realName,
+        Class_Period: student.Class_Period,
+        Season: 'Fall_2026'
+      });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+
+      if (result.success) {
+        rosterData[oasisId] = realName;
+        delete pendingSaves[oasisId];
+        input.style.borderColor = 'var(--green)';
+        setTimeout(() => { input.style.borderColor = 'rgba(255,255,255,0.1)'; }, 1500);
+        showToast(`// ✅ ${realName} → ${student.GamerTag} saved`);
+      } else {
+        showToast('// ' + (result.error || 'Save failed'), true);
+      }
+    } catch (e) {
+      // Apps Script not yet updated — save locally in memory for now
+      rosterData[oasisId] = realName;
+      delete pendingSaves[oasisId];
+      input.style.borderColor = 'var(--cyan)';
+      showToast(`// Saved locally — deploy Apps Script update to persist`);
+    } finally {
+      if (btn) { btn.textContent = 'Save'; btn.disabled = false; btn.style.opacity = '0.4'; }
+      renderRosterTable();
+    }
+  }
+
+  // Stop auto-refresh when switching away from roster tab
+  function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    if (name !== 'roster') stopRosterRefresh();
+  }
+
+  // ── INIT ──
+  loadAllData();
+</script>
+</body>
+</html>
