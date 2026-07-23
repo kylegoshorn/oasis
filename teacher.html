@@ -476,6 +476,8 @@
     <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements'); loadAnnouncement();">📢 Announcements</button>
     <button class="tab-btn" data-tab="helpqueue" onclick="switchTab('helpqueue'); loadHelpRequests();">🆘 Help Queue</button>
     <button class="tab-btn" data-tab="roster" onclick="switchTab('roster'); startRosterRefresh();">🔐 Roster Bridge</button>
+    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings();">⚙️ Settings</button>
+    <button class="tab-btn" data-tab="classdisplay" onclick="switchTab('classdisplay'); loadClassDisplaySettings();">🖥️ Class Display</button>
   </div>
 
   <!-- STUDENTS TAB -->
@@ -858,13 +860,93 @@
 
   </div>
 
+  <!-- SETTINGS TAB -->
+  <div class="tab-panel" id="tab-settings">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">⚙️ Period → Grade Mapping</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;">Set which grade each class period belongs to. Students only pick their period when they register — their grade is assigned automatically based on this mapping, and used to filter their assignments correctly.</p>
+
+      <div id="periodGradeGrid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem;">
+        <!-- Populated by JS -->
+      </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <button class="btn-mini" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="savePeriodGradeSettings()">💾 Save Mapping</button>
+        <span id="settingsStatus" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);"></span>
+      </div>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-top:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.75rem;font-weight:700;color:var(--muted);letter-spacing:0.1em;margin-bottom:0.75rem;">// HOW THIS WORKS</p>
+      <ul style="font-size:0.75rem;color:var(--muted);line-height:1.8;padding-left:1.25rem;">
+        <li>Set this once at the start of each 9-week season — update it if your schedule changes</li>
+        <li>New students registering will get the correct grade automatically based on their period</li>
+        <li>Existing students already registered keep whatever grade they were assigned at signup — edit their grade directly in the Students tab if needed</li>
+        <li>Assignments you post for "6th Grade" will show up for any student whose period maps to 6th</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CLASS DISPLAY TAB -->
+  <div class="tab-panel" id="tab-classdisplay">
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">🖥️ Class Display Screen</p>
+          <p style="font-size:0.75rem;color:var(--muted);line-height:1.6;max-width:600px;">Content shown on the big-screen display (<code style="color:var(--cyan);">display.html</code>) that you project as students walk in. Set this once per grade — both periods of that grade will see the same content.</p>
+        </div>
+        <a href="display.html" target="_blank" class="btn-mini" style="text-decoration:none;padding:0.6rem 1.25rem;">🖥️ Open Display Screen</a>
+      </div>
+    </div>
+
+    <!-- GRADE SELECTOR -->
+    <div style="display:flex;gap:0.5rem;margin-bottom:1.25rem;">
+      <button class="award-period-btn active" data-grade="6th" onclick="setClassDisplayGrade('6th', this)">6th Grade</button>
+      <button class="award-period-btn" data-grade="7th" onclick="setClassDisplayGrade('7th', this)">7th Grade</button>
+      <button class="award-period-btn" data-grade="8th" onclick="setClassDisplayGrade('8th', this)">8th Grade</button>
+    </div>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
+
+      <!-- WEEKLY GOAL -->
+      <div style="margin-bottom:1.5rem;">
+        <label class="ab-label">🎯 This Week's Goal</label>
+        <input type="text" class="search-input" id="cdWeeklyGoal" placeholder="e.g. Understand how HTML tags structure a webpage" style="width:100%;">
+      </div>
+
+      <!-- TODAY'S PLAN -->
+      <div style="margin-bottom:1.5rem;">
+        <label class="ab-label">📋 Today's Plan (one step per line)</label>
+        <textarea id="cdPlan" placeholder="Bell work&#10;Review yesterday's concept&#10;Guided practice&#10;Independent work time&#10;Exit ticket" style="width:100%;height:110px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.85rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <!-- SUCCESS CRITERIA -->
+      <div style="margin-bottom:1.5rem;">
+        <label class="ab-label">✅ Success Looks Like (one "I can..." statement per line)</label>
+        <textarea id="cdSuccess" placeholder="I can explain what an HTML tag does&#10;I can identify the head and body of a webpage&#10;I can write a basic HTML structure" style="width:100%;height:90px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.85rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <!-- CHECKLIST -->
+      <div style="margin-bottom:1.5rem;">
+        <label class="ab-label">☑️ Student Checklist (short items, one per line)</label>
+        <textarea id="cdChecklist" placeholder="Bell work submitted&#10;Notes taken&#10;Exit ticket completed" style="width:100%;height:80px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.85rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <button class="btn-mini" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="saveClassDisplaySettings()">💾 Save for This Grade</button>
+        <span id="classDisplayStatus" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);"></span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
   // ── CONFIG ──
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOI27hEji_0rod_zb1f83mpGtX-oVHPcsvrUa4V5QP2rnuOUjljXdzGJrYdxG0ZomOIw/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcz_geFVeMpJHSIBR9R50mnz7oaxeWb3xuOJkk2iCry2FS1GV1_Wpfl3JZ3v7XiwTBdw/exec';
 
   let allStudents = [];
   let allClasses = [];
@@ -1498,6 +1580,161 @@
       if (result.success) { showToast('// Help request resolved ✅'); loadHelpRequests(); }
       else { showToast('// ' + (result.error||'Failed'), true); btn.textContent = '✅ Resolve'; btn.disabled = false; }
     } catch(e) { showToast('// Connection error', true); btn.textContent = '✅ Resolve'; btn.disabled = false; }
+  }
+
+  // ── CLASS DISPLAY SCREEN CONTENT ──
+  let cdCurrentGrade = '6th';
+  let cdCache = {}; // grade -> {Weekly_Goal, Plan, Success_Criteria, Checklist}
+
+  function setClassDisplayGrade(grade, btn) {
+    // Save current textarea values into cache before switching
+    cacheCurrentClassDisplayInputs();
+
+    cdCurrentGrade = grade;
+    document.querySelectorAll('#tab-classdisplay .award-period-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderClassDisplayForm();
+  }
+
+  function cacheCurrentClassDisplayInputs() {
+    cdCache[cdCurrentGrade] = {
+      Weekly_Goal: document.getElementById('cdWeeklyGoal').value,
+      Plan: document.getElementById('cdPlan').value,
+      Success_Criteria: document.getElementById('cdSuccess').value,
+      Checklist: document.getElementById('cdChecklist').value
+    };
+  }
+
+  async function loadClassDisplaySettings() {
+    const status = document.getElementById('classDisplayStatus');
+    status.textContent = '// Loading...';
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAllClassContent`);
+      const data = await res.json();
+      cdCache = data.content_by_grade || {};
+    } catch(e) {
+      cdCache = {};
+    }
+    status.textContent = '';
+    renderClassDisplayForm();
+  }
+
+  function renderClassDisplayForm() {
+    const c = cdCache[cdCurrentGrade] || {};
+    document.getElementById('cdWeeklyGoal').value = c.Weekly_Goal || '';
+    document.getElementById('cdPlan').value = (c.Plan || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
+    document.getElementById('cdSuccess').value = (c.Success_Criteria || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
+    document.getElementById('cdChecklist').value = (c.Checklist || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
+  }
+
+  async function saveClassDisplaySettings() {
+    const status = document.getElementById('classDisplayStatus');
+    status.textContent = '// Saving...';
+    status.style.color = 'var(--muted)';
+
+    const weeklyGoal = document.getElementById('cdWeeklyGoal').value.trim();
+    const plan = document.getElementById('cdPlan').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
+    const success = document.getElementById('cdSuccess').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
+    const checklist = document.getElementById('cdChecklist').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
+
+    try {
+      const params = new URLSearchParams({
+        action: 'saveClassContent',
+        Grade: cdCurrentGrade,
+        Weekly_Goal: weeklyGoal,
+        Plan: plan,
+        Success_Criteria: success,
+        Checklist: checklist
+      });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        cdCache[cdCurrentGrade] = { Weekly_Goal: weeklyGoal, Plan: plan, Success_Criteria: success, Checklist: checklist };
+        status.textContent = `// ✅ Saved for ${cdCurrentGrade} Grade`;
+        status.style.color = 'var(--green)';
+        showToast(`// ${cdCurrentGrade} Grade display updated`);
+      } else {
+        status.textContent = '// ' + (result.error || 'Save failed');
+        status.style.color = 'var(--red)';
+      }
+    } catch(e) {
+      status.textContent = '// Connection error — try again';
+      status.style.color = 'var(--red)';
+    }
+  }
+
+  // ── SETTINGS: PERIOD → GRADE MAPPING ──
+  let currentPeriodGradeMap = { '1':'6th', '2':'6th', '3':'7th', '4':'7th', '5':'8th', '6':'8th' };
+
+  async function loadPeriodGradeSettings() {
+    const grid = document.getElementById('periodGradeGrid');
+    grid.innerHTML = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:0.72rem;color:var(--muted);grid-column:1/-1;">// Loading...</p>';
+
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getPeriodGradeMap`);
+      const data = await res.json();
+      if (data.map && Object.keys(data.map).length > 0) {
+        currentPeriodGradeMap = data.map;
+      }
+    } catch(e) {
+      // Use default if not yet saved
+    }
+
+    renderPeriodGradeGrid();
+  }
+
+  function renderPeriodGradeGrid() {
+    const grid = document.getElementById('periodGradeGrid');
+    grid.innerHTML = [1,2,3,4,5,6].map(p => {
+      const current = currentPeriodGradeMap[String(p)] || '6th';
+      return `
+        <div style="background:var(--black);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:1rem;">
+          <label style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--cyan);letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:0.5rem;">Period ${p}</label>
+          <select class="filter-select" style="width:100%;" id="periodGrade-${p}" onchange="markSettingsPending()">
+            <option value="6th" ${current==='6th'?'selected':''}>6th Grade</option>
+            <option value="7th" ${current==='7th'?'selected':''}>7th Grade</option>
+            <option value="8th" ${current==='8th'?'selected':''}>8th Grade</option>
+          </select>
+        </div>`;
+    }).join('');
+  }
+
+  function markSettingsPending() {
+    const status = document.getElementById('settingsStatus');
+    status.textContent = '// Unsaved changes — click Save Mapping';
+    status.style.color = '#FFB347';
+  }
+
+  async function savePeriodGradeSettings() {
+    const status = document.getElementById('settingsStatus');
+    status.textContent = '// Saving...';
+    status.style.color = 'var(--muted)';
+
+    const newMap = {};
+    [1,2,3,4,5,6].forEach(p => {
+      newMap[String(p)] = document.getElementById(`periodGrade-${p}`).value;
+    });
+
+    try {
+      const params = new URLSearchParams({
+        action: 'savePeriodGradeMap',
+        Map: JSON.stringify(newMap)
+      });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        currentPeriodGradeMap = newMap;
+        status.textContent = '// ✅ Mapping saved! New registrations will use this.';
+        status.style.color = 'var(--green)';
+        showToast('// Period → Grade mapping saved');
+      } else {
+        status.textContent = '// ' + (result.error || 'Save failed');
+        status.style.color = 'var(--red)';
+      }
+    } catch(e) {
+      status.textContent = '// Connection error — try again';
+      status.style.color = 'var(--red)';
+    }
   }
 
   // ── ROSTER BRIDGE ──
