@@ -33,21 +33,88 @@
   }
 
   body {
+    position: relative;
+  }
+
+  /* ── ANIMATED OASIS PORTAL BACKGROUND ── */
+  .portal-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    background: var(--black);
+  }
+
+  .portal-bg::before {
+    content: '';
+    position: absolute;
+    inset: -50%;
     background:
-      radial-gradient(ellipse 50% 50% at 15% 10%, rgba(123,47,255,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 40% at 90% 90%, rgba(0,245,255,0.08) 0%, transparent 60%),
-      var(--black);
+      radial-gradient(ellipse 40% 40% at 20% 20%, rgba(123,47,255,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 35% 35% at 80% 75%, rgba(0,245,255,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 30% 30% at 50% 50%, rgba(255,215,0,0.06) 0%, transparent 65%);
+    animation: portalDrift 24s ease-in-out infinite alternate;
+  }
+
+  @keyframes portalDrift {
+    0%   { transform: translate(0%, 0%) rotate(0deg) scale(1); }
+    50%  { transform: translate(3%, -2%) rotate(3deg) scale(1.05); }
+    100% { transform: translate(-2%, 3%) rotate(-2deg) scale(1.02); }
+  }
+
+  .portal-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 80%);
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+
+  @keyframes gridPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .portal-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan), 0 0 16px var(--cyan);
+    animation: floatUp linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    10%  { opacity: 0.8; }
+    90%  { opacity: 0.4; }
+    100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+  }
+
+  .app-shell {
+    position: relative;
+    z-index: 5;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
 
   /* ── TOP BAR ── */
   .topbar {
     height: 64px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 2rem;
     border-bottom: 1px solid var(--border);
-    background: rgba(10,10,15,0.6);
+    background: rgba(10,10,15,0.75);
+    backdrop-filter: blur(6px);
   }
 
   .topbar-logo {
@@ -96,15 +163,18 @@
 
   /* ── MAIN GRID ── */
   .display-grid {
-    height: calc(100vh - 64px - 90px);
+    flex: 1;
     display: grid;
     grid-template-columns: 380px 1fr;
     gap: 1px;
     background: var(--border);
+    overflow: hidden;
+    min-height: 0;
   }
 
   .panel {
-    background: var(--black);
+    background: rgba(10,10,15,0.75);
+    backdrop-filter: blur(6px);
     padding: 1.5rem 1.75rem;
     overflow: hidden;
     display: flex;
@@ -123,6 +193,17 @@
     gap: 0.5rem;
     flex-shrink: 0;
   }
+
+  /* ── LEFT SIDE: STACKED PANELS ── */
+  .left-stack {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .left-stack .panel { background: rgba(10,10,15,0.75); }
 
   /* ── LEADERBOARD PANEL ── */
   .lb-list {
@@ -181,13 +262,65 @@
   /* ── RIGHT SIDE: STACKED PANELS ── */
   .right-stack {
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
     gap: 1px;
     background: var(--border);
     overflow: hidden;
   }
 
-  .right-stack .panel { background: var(--black); }
+  .right-stack .panel { background: rgba(10,10,15,0.75); }
+
+  /* CLASS COMPETITION PANEL */
+  .comp-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .comp-card {
+    background: var(--card);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+  }
+
+  .comp-card.winner {
+    border-color: var(--gold);
+    background: rgba(255,215,0,0.06);
+  }
+
+  .comp-period-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+  }
+
+  .comp-period-name {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--white);
+  }
+
+  .comp-score {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .comp-stats-row {
+    display: flex;
+    gap: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+
+  .comp-stats-row span strong { color: var(--cyan); }
 
   /* PLAN LIST */
   .plan-list {
@@ -240,40 +373,16 @@
     flex-shrink: 0;
   }
 
-  /* CHECKLIST BAR (bottom) */
-  .checklist-bar {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-    padding: 0 1.75rem;
-    flex-wrap: wrap;
-  }
-
-  .checklist-item {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
-    color: var(--white);
-  }
-
-  .check-box {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--gold);
-    border-radius: 4px;
-    flex-shrink: 0;
-  }
-
   /* ── BOTTOM BAR: WEEKLY GOAL ── */
   .goalbar {
     height: 90px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 1.5rem;
     padding: 0 2rem;
-    background: linear-gradient(135deg, rgba(255,215,0,0.08), rgba(123,47,255,0.08));
+    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(123,47,255,0.1));
+    backdrop-filter: blur(6px);
     border-top: 1px solid var(--border);
   }
 
@@ -304,70 +413,87 @@
   ::-webkit-scrollbar-track { background: var(--black); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+  @media (max-width: 1300px) {
+    .display-grid { grid-template-columns: 320px 1fr; }
+  }
   @media (max-width: 1000px) {
-    .display-grid { grid-template-columns: 1fr; grid-template-rows: 300px 1fr; }
+    .display-grid { grid-template-columns: 1fr; grid-template-rows: 380px 1fr; overflow-y: auto; }
   }
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="topbar">
-  <div class="topbar-logo">THE <span>OASIS</span></div>
-  <div class="grade-toggle" id="gradeToggle">
-    <button class="grade-btn active" data-grade="6th" onclick="setGrade('6th', this)">6th Grade</button>
-    <button class="grade-btn" data-grade="7th" onclick="setGrade('7th', this)">7th Grade</button>
-    <button class="grade-btn" data-grade="8th" onclick="setGrade('8th', this)">8th Grade</button>
-  </div>
-  <div class="topbar-clock" id="clock">--:--</div>
+<!-- ANIMATED PORTAL BACKGROUND -->
+<div class="portal-bg">
+  <div class="portal-grid"></div>
+  <div id="particleField"></div>
 </div>
 
-<!-- MAIN GRID -->
-<div class="display-grid">
+<div class="app-shell">
 
-  <!-- LEFT: LEADERBOARD -->
-  <div class="panel">
-    <div class="panel-title">🏆 Live Leaderboard</div>
-    <div class="lb-list" id="lbList">
-      <p class="empty-note">// Loading...</p>
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-logo">THE <span>OASIS</span></div>
+    <div class="grade-toggle" id="gradeToggle">
+      <button class="grade-btn active" data-grade="6th" onclick="setGrade('6th', this)">6th Grade</button>
+      <button class="grade-btn" data-grade="7th" onclick="setGrade('7th', this)">7th Grade</button>
+      <button class="grade-btn" data-grade="8th" onclick="setGrade('8th', this)">8th Grade</button>
     </div>
+    <div class="topbar-clock" id="clock">--:--</div>
   </div>
 
-  <!-- RIGHT: PLAN + SUCCESS + CHECKLIST -->
-  <div class="right-stack">
+  <!-- MAIN GRID -->
+  <div class="display-grid">
 
-    <div class="panel">
-      <div class="panel-title">📋 Today's Plan</div>
-      <ol class="plan-list" id="planList" style="padding:0;">
-        <li class="empty-note">// No plan posted yet</li>
-      </ol>
-    </div>
+    <!-- LEFT: LEADERBOARD + CLASS COMPETITION -->
+    <div class="left-stack">
 
-    <div class="panel">
-      <div class="panel-title">🎯 Success Looks Like</div>
-      <ul class="success-list" id="successList" style="padding:0;">
-        <li class="empty-note">// No success criteria posted yet</li>
-      </ul>
-    </div>
-
-    <div class="panel" style="padding-top:1rem;padding-bottom:1rem;">
-      <div class="panel-title" style="margin-bottom:0.75rem;">✅ Checklist</div>
-      <div class="checklist-bar" id="checklistBar">
-        <span class="empty-note">// No checklist posted yet</span>
+      <div class="panel">
+        <div class="panel-title">🏆 Live Leaderboard</div>
+        <div class="lb-list" id="lbList">
+          <p class="empty-note">// Loading...</p>
+        </div>
       </div>
+
+      <div class="panel">
+        <div class="panel-title">📊 Class Competition</div>
+        <div class="comp-list" id="compList">
+          <p class="empty-note">// Loading...</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: PLAN + SUCCESS -->
+    <div class="right-stack">
+
+      <div class="panel">
+        <div class="panel-title">📋 Today's Plan</div>
+        <ol class="plan-list" id="planList" style="padding:0;">
+          <li class="empty-note">// No plan posted yet</li>
+        </ol>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">🎯 Success Looks Like</div>
+        <ul class="success-list" id="successList" style="padding:0;">
+          <li class="empty-note">// No success criteria posted yet</li>
+        </ul>
+      </div>
+
     </div>
 
   </div>
 
-</div>
-
-<!-- BOTTOM: WEEKLY GOAL -->
-<div class="goalbar">
-  <div class="goalbar-icon">🎯</div>
-  <div>
-    <div class="goalbar-label">// This Week's Goal</div>
-    <div class="goalbar-text" id="weeklyGoalText">Loading...</div>
+  <!-- BOTTOM: WEEKLY GOAL -->
+  <div class="goalbar">
+    <div class="goalbar-icon">🎯</div>
+    <div>
+      <div class="goalbar-label">// This Week's Goal</div>
+      <div class="goalbar-text" id="weeklyGoalText">Loading...</div>
+    </div>
   </div>
+
 </div>
 
 <script>
@@ -382,6 +508,25 @@
     loadClassContent();
   }
 
+  // ── PARTICLE FIELD ──
+  function createParticles() {
+    const field = document.getElementById('particleField');
+    const count = 30;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'portal-particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (12 + Math.random() * 14) + 's';
+      p.style.animationDelay = (Math.random() * 20) + 's';
+      const colors = ['var(--cyan)', 'var(--gold)', 'var(--purple)'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.background = color;
+      p.style.boxShadow = `0 0 8px ${color}, 0 0 16px ${color}`;
+      field.appendChild(p);
+    }
+  }
+  createParticles();
+
   // ── CLOCK ──
   function updateClock() {
     const now = new Date();
@@ -390,54 +535,84 @@
   updateClock();
   setInterval(updateClock, 10000);
 
-  // ── LEADERBOARD ──
-  async function loadLeaderboard() {
-    const list = document.getElementById('lbList');
-    try {
-      const res = await fetch(APPS_SCRIPT_URL);
-      const data = await res.json();
-      const valid = (data.students || [])
-        .filter(s => s.GamerTag && s.GamerTag.trim() !== '')
-        .sort((a,b) => (Number(b.Current_XP)||0) - (Number(a.Current_XP)||0))
-        .slice(0, 12);
-
-      if (valid.length === 0) {
-        list.innerHTML = '<p class="empty-note">// No questers yet</p>';
-        return;
-      }
-
-      list.innerHTML = valid.map((s, i) => {
-        const rank = i + 1;
-        const cls = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
-        const medal = rank === 1 ? '👑' : rank;
-        return `
-          <div class="lb-row ${cls}">
-            <span class="lb-rank">${medal}</span>
-            <span class="lb-tag">${escapeHtml(s.GamerTag)}</span>
-            <span class="lb-xp">${(Number(s.Current_XP)||0).toLocaleString()} XP</span>
-          </div>`;
-      }).join('');
-    } catch(e) {
-      list.innerHTML = '<p class="empty-note">// Could not load leaderboard</p>';
-    }
-  }
-
   function escapeHtml(str) {
     const d = document.createElement('div');
     d.textContent = str;
     return d.innerHTML;
   }
 
-  // ── CLASS CONTENT (Plan, Success, Checklist, Weekly Goal) ──
+  // ── LEADERBOARD + CLASS COMPETITION (same data feed) ──
+  async function loadLeaderboard() {
+    const lbList = document.getElementById('lbList');
+    const compList = document.getElementById('compList');
+    try {
+      const res = await fetch(APPS_SCRIPT_URL);
+      const data = await res.json();
+
+      // Leaderboard
+      const valid = (data.students || [])
+        .filter(s => s.GamerTag && s.GamerTag.trim() !== '')
+        .sort((a,b) => (Number(b.Current_XP)||0) - (Number(a.Current_XP)||0))
+        .slice(0, 12);
+
+      if (valid.length === 0) {
+        lbList.innerHTML = '<p class="empty-note">// No questers yet</p>';
+      } else {
+        lbList.innerHTML = valid.map((s, i) => {
+          const rank = i + 1;
+          const cls = rank === 1 ? 'top1' : rank === 2 ? 'top2' : rank === 3 ? 'top3' : '';
+          const medal = rank === 1 ? '👑' : rank;
+          return `
+            <div class="lb-row ${cls}">
+              <span class="lb-rank">${medal}</span>
+              <span class="lb-tag">${escapeHtml(s.GamerTag)}</span>
+              <span class="lb-xp">${(Number(s.Current_XP)||0).toLocaleString()} XP</span>
+            </div>`;
+        }).join('');
+      }
+
+      // Class Competition
+      const validClasses = (data.classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
+      if (validClasses.length === 0) {
+        compList.innerHTML = '<p class="empty-note">// Class data appears each Friday</p>';
+      } else {
+        const scored = validClasses.map(c => {
+          const avgXP = Number(c.Average_XP_Per_Student) || 0;
+          const comp = parseFloat(c.Quest_Completion_Rate) || 0;
+          return { ...c, avgXP, comp, score: (avgXP * 0.6) + (comp * 0.4) };
+        }).sort((a,b) => b.score - a.score);
+        const maxScore = scored[0]?.score || 0;
+
+        compList.innerHTML = scored.map(c => {
+          const isWinner = c.score === maxScore && maxScore > 0;
+          return `
+            <div class="comp-card ${isWinner?'winner':''}">
+              <div class="comp-period-row">
+                <span class="comp-period-name">${isWinner?'👑 ':''}Period ${c.Class_Period}</span>
+                <span class="comp-score">${c.score.toFixed(1)} pts</span>
+              </div>
+              <div class="comp-stats-row">
+                <span>Avg XP: <strong>${c.avgXP}</strong></span>
+                <span>Completion: <strong>${c.Quest_Completion_Rate || '0%'}</strong></span>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+    } catch(e) {
+      lbList.innerHTML = '<p class="empty-note">// Could not load leaderboard</p>';
+      compList.innerHTML = '<p class="empty-note">// Could not load</p>';
+    }
+  }
+
+  // ── CLASS CONTENT (Plan, Success, Weekly Goal) ──
   async function loadClassContent() {
     const planList = document.getElementById('planList');
     const successList = document.getElementById('successList');
-    const checklistBar = document.getElementById('checklistBar');
     const goalText = document.getElementById('weeklyGoalText');
 
     planList.innerHTML = '<li class="empty-note">// Loading...</li>';
     successList.innerHTML = '<li class="empty-note">// Loading...</li>';
-    checklistBar.innerHTML = '<span class="empty-note">// Loading...</span>';
     goalText.textContent = 'Loading...';
 
     try {
@@ -445,31 +620,21 @@
       const data = await res.json();
       const c = data.content || {};
 
-      // Plan (pipe-separated list)
       const planItems = (c.Plan || '').split('|').map(s => s.trim()).filter(Boolean);
       planList.innerHTML = planItems.length
         ? planItems.map((item, i) => `<li class="plan-item"><span class="plan-num">${i+1}.</span><span>${escapeHtml(item)}</span></li>`).join('')
         : '<li class="empty-note">// No plan posted yet</li>';
 
-      // Success criteria (pipe-separated list)
       const successItems = (c.Success_Criteria || '').split('|').map(s => s.trim()).filter(Boolean);
       successList.innerHTML = successItems.length
         ? successItems.map(item => `<li class="success-item">${escapeHtml(item)}</li>`).join('')
         : '<li class="empty-note">// No success criteria posted yet</li>';
 
-      // Checklist (pipe-separated list)
-      const checklistItems = (c.Checklist || '').split('|').map(s => s.trim()).filter(Boolean);
-      checklistBar.innerHTML = checklistItems.length
-        ? checklistItems.map(item => `<div class="checklist-item"><div class="check-box"></div>${escapeHtml(item)}</div>`).join('')
-        : '<span class="empty-note">// No checklist posted yet</span>';
-
-      // Weekly goal
       goalText.textContent = c.Weekly_Goal && c.Weekly_Goal.trim() ? c.Weekly_Goal : 'No goal posted yet for this grade';
 
     } catch(e) {
       planList.innerHTML = '<li class="empty-note">// Could not load — check connection</li>';
       successList.innerHTML = '<li class="empty-note">// Could not load</li>';
-      checklistBar.innerHTML = '<span class="empty-note">// Could not load</span>';
       goalText.textContent = 'Could not load';
     }
   }
@@ -477,8 +642,8 @@
   // ── INIT ──
   loadLeaderboard();
   loadClassContent();
-  setInterval(loadLeaderboard, 60000);   // refresh leaderboard every 60s
-  setInterval(loadClassContent, 120000); // refresh class content every 2 min
+  setInterval(loadLeaderboard, 60000);
+  setInterval(loadClassContent, 120000);
 </script>
 </body>
 </html>
