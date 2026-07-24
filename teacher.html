@@ -476,7 +476,7 @@
     <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements'); loadAnnouncement();">📢 Announcements</button>
     <button class="tab-btn" data-tab="helpqueue" onclick="switchTab('helpqueue'); loadHelpRequests();">🆘 Help Queue</button>
     <button class="tab-btn" data-tab="roster" onclick="switchTab('roster'); startRosterRefresh();">🔐 Roster Bridge</button>
-    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings();">⚙️ Settings</button>
+    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings(); loadSeasonStatus();">⚙️ Settings</button>
     <button class="tab-btn" data-tab="classdisplay" onclick="switchTab('classdisplay'); loadClassDisplaySettings();">🖥️ Class Display</button>
   </div>
 
@@ -862,6 +862,44 @@
 
   <!-- SETTINGS TAB -->
   <div class="tab-panel" id="tab-settings">
+
+    <!-- SEASON STATUS -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">🌍 Season Status</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6;">Controls the numbers shown in the Season Bar at the top of the student site — update this each week.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.25rem;">
+        <div>
+          <label class="ab-label">Current Week</label>
+          <select class="filter-select" id="seasonWeek" style="width:100%;">
+            <option value="1">Week 1</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8</option>
+            <option value="9">Week 9</option>
+          </select>
+        </div>
+        <div>
+          <label class="ab-label">Current World (shown site-wide)</label>
+          <input type="text" class="search-input" id="seasonWorld" placeholder="e.g. World 2" style="width:100%;">
+        </div>
+        <div>
+          <label class="ab-label">Next Boss Battle</label>
+          <input type="text" class="search-input" id="seasonBossBattle" placeholder="e.g. Week 5" style="width:100%;">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+        <button class="btn-mini" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="saveSeasonStatus()">💾 Save Season Status</button>
+        <span id="seasonStatusMsg" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);"></span>
+      </div>
+      <p style="font-size:0.68rem;color:var(--muted);margin-top:0.75rem;line-height:1.5;">Since 6th/7th/8th each have their own World names, "Current World" here is a simple shared label (like "World 2") shown to everyone — it doesn't need to match each grade's specific World name exactly.</p>
+    </div>
+
     <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;">
       <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">⚙️ Period → Grade Mapping</p>
       <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;">Set which grade each class period belongs to. Students only pick their period when they register — their grade is assigned automatically based on this mapping, and used to filter their assignments correctly.</p>
@@ -1660,6 +1698,53 @@
     } catch(e) {
       status.textContent = '// Connection error — try again';
       status.style.color = 'var(--red)';
+    }
+  }
+
+  // ── SEASON STATUS ──
+  async function loadSeasonStatus() {
+    const msg = document.getElementById('seasonStatusMsg');
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getSeasonStatus`);
+      const data = await res.json();
+      const s = data.status || {};
+      if (s.Week) document.getElementById('seasonWeek').value = s.Week;
+      document.getElementById('seasonWorld').value = s.World || '';
+      document.getElementById('seasonBossBattle').value = s.Boss_Battle || '';
+    } catch(e) {
+      // Defaults stay as-is if nothing saved yet
+    }
+  }
+
+  async function saveSeasonStatus() {
+    const msg = document.getElementById('seasonStatusMsg');
+    msg.textContent = '// Saving...';
+    msg.style.color = 'var(--muted)';
+
+    const week = document.getElementById('seasonWeek').value;
+    const world = document.getElementById('seasonWorld').value.trim();
+    const bossBattle = document.getElementById('seasonBossBattle').value.trim();
+
+    try {
+      const params = new URLSearchParams({
+        action: 'saveSeasonStatus',
+        Week: week,
+        World: world,
+        Boss_Battle: bossBattle
+      });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        msg.textContent = '// ✅ Season status updated — live on student site now';
+        msg.style.color = 'var(--green)';
+        showToast('// Season status saved');
+      } else {
+        msg.textContent = '// ' + (result.error || 'Save failed');
+        msg.style.color = 'var(--red)';
+      }
+    } catch(e) {
+      msg.textContent = '// Connection error — try again';
+      msg.style.color = 'var(--red)';
     }
   }
 

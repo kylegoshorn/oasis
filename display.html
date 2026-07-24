@@ -120,7 +120,7 @@
   .topbar-logo {
     font-family: 'Orbitron', sans-serif;
     font-weight: 900;
-    font-size: 1.3rem;
+    font-size: 1.8rem;
     letter-spacing: 0.1em;
     color: var(--gold);
   }
@@ -139,10 +139,10 @@
     background: transparent;
     border: none;
     color: var(--muted);
-    padding: 0.5rem 1.5rem;
+    padding: 0.7rem 2rem;
     border-radius: 7px;
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.8rem;
+    font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -156,7 +156,7 @@
 
   .topbar-clock {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     color: var(--muted);
     letter-spacing: 0.05em;
   }
@@ -183,27 +183,18 @@
 
   .panel-title {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.85rem;
+    font-size: 1.3rem;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: var(--gold);
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
     flex-shrink: 0;
   }
 
-  /* ── LEFT SIDE: STACKED PANELS ── */
-  .left-stack {
-    display: grid;
-    grid-template-rows: 1fr 1fr;
-    gap: 1px;
-    background: var(--border);
-    overflow: hidden;
-  }
-
-  .left-stack .panel { background: rgba(10,10,15,0.75); }
+  /* LEFT: LEADERBOARD IS SINGLE FULL-HEIGHT PANEL, NO STACK NEEDED */
 
   /* ── LEADERBOARD PANEL ── */
   .lb-list {
@@ -217,11 +208,11 @@
   .lb-row {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
     background: var(--card);
     border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 8px;
-    padding: 0.6rem 0.85rem;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
   }
 
   .lb-row.top1 { border-color: var(--gold); background: rgba(255,215,0,0.06); }
@@ -231,9 +222,9 @@
   .lb-rank {
     font-family: 'Orbitron', sans-serif;
     font-weight: 900;
-    font-size: 1rem;
+    font-size: 1.6rem;
     color: var(--muted);
-    width: 24px;
+    width: 36px;
     text-align: center;
     flex-shrink: 0;
   }
@@ -243,7 +234,7 @@
 
   .lb-tag {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.85rem;
+    font-size: 1.4rem;
     font-weight: 600;
     color: var(--white);
     flex: 1;
@@ -254,15 +245,16 @@
 
   .lb-xp {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
+    font-size: 1.3rem;
     color: var(--gold);
     flex-shrink: 0;
   }
 
   /* ── RIGHT SIDE: STACKED PANELS ── */
+  /* ── RIGHT SIDE: 4 STACKED PANELS ── */
   .right-stack {
     display: grid;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
     gap: 1px;
     background: var(--border);
     overflow: hidden;
@@ -282,8 +274,8 @@
   .comp-card {
     background: var(--card);
     border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
   }
 
   .comp-card.winner {
@@ -301,22 +293,22 @@
   .comp-period-name {
     font-family: 'Orbitron', sans-serif;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 1.3rem;
     color: var(--white);
   }
 
   .comp-score {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 1.3rem;
     color: var(--gold);
     font-weight: 700;
   }
 
   .comp-stats-row {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-size: 1rem;
     color: var(--muted);
   }
 
@@ -334,8 +326,8 @@
   .plan-item {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    font-size: 1rem;
+    gap: 1rem;
+    font-size: 1.7rem;
     color: var(--white);
     line-height: 1.4;
   }
@@ -345,7 +337,7 @@
     font-weight: 900;
     color: var(--cyan);
     flex-shrink: 0;
-    min-width: 1.5rem;
+    min-width: 2.2rem;
   }
 
   /* SUCCESS CRITERIA */
@@ -360,8 +352,8 @@
   .success-item {
     display: flex;
     align-items: flex-start;
-    gap: 0.6rem;
-    font-size: 0.95rem;
+    gap: 0.85rem;
+    font-size: 1.5rem;
     color: var(--white);
     line-height: 1.4;
   }
@@ -371,41 +363,22 @@
     color: var(--green);
     font-weight: 700;
     flex-shrink: 0;
+    font-size: 1.5rem;
   }
 
   /* ── BOTTOM BAR: WEEKLY GOAL ── */
-  .goalbar {
-    height: 90px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 0 2rem;
-    background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(123,47,255,0.1));
-    backdrop-filter: blur(6px);
-    border-top: 1px solid var(--border);
-  }
-
-  .goalbar-icon { font-size: 2rem; flex-shrink: 0; }
-
-  .goalbar-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
-    color: var(--gold);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
+  /* Weekly Goal text now lives inside a regular panel */
 
   .goalbar-text {
-    font-size: 1.1rem;
+    font-size: 1.9rem;
     color: var(--white);
-    font-weight: 500;
-    margin-top: 0.2rem;
+    font-weight: 600;
+    margin-top: 0.3rem;
   }
 
   .empty-note {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     color: var(--muted);
   }
 
@@ -445,15 +418,16 @@
   <!-- MAIN GRID -->
   <div class="display-grid">
 
-    <!-- LEFT: LEADERBOARD + CLASS COMPETITION -->
-    <div class="left-stack">
-
-      <div class="panel">
-        <div class="panel-title">🏆 Live Leaderboard</div>
-        <div class="lb-list" id="lbList">
-          <p class="empty-note">// Loading...</p>
-        </div>
+    <!-- LEFT: LEADERBOARD (full height) -->
+    <div class="panel">
+      <div class="panel-title">🏆 Live Leaderboard</div>
+      <div class="lb-list" id="lbList">
+        <p class="empty-note">// Loading...</p>
       </div>
+    </div>
+
+    <!-- RIGHT: CLASS COMP, PLAN, SUCCESS, WEEKLY GOAL -->
+    <div class="right-stack">
 
       <div class="panel">
         <div class="panel-title">📊 Class Competition</div>
@@ -461,11 +435,6 @@
           <p class="empty-note">// Loading...</p>
         </div>
       </div>
-
-    </div>
-
-    <!-- RIGHT: PLAN + SUCCESS -->
-    <div class="right-stack">
 
       <div class="panel">
         <div class="panel-title">📋 Today's Plan</div>
@@ -481,17 +450,13 @@
         </ul>
       </div>
 
+      <div class="panel">
+        <div class="panel-title">🎯 Weekly Goal</div>
+        <p class="goalbar-text" id="weeklyGoalText" style="margin-top:0;">Loading...</p>
+      </div>
+
     </div>
 
-  </div>
-
-  <!-- BOTTOM: WEEKLY GOAL -->
-  <div class="goalbar">
-    <div class="goalbar-icon">🎯</div>
-    <div>
-      <div class="goalbar-label">// This Week's Goal</div>
-      <div class="goalbar-text" id="weeklyGoalText">Loading...</div>
-    </div>
   </div>
 
 </div>

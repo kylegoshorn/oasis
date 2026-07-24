@@ -1566,7 +1566,7 @@
   </div>
   <div class="season-stat">
     <span class="season-stat-label">WEEK</span>
-    <span class="season-stat-value" id="statWeek">4 / 9</span>
+    <span class="season-stat-value" id="statWeek">— / 9</span>
   </div>
   <div class="season-stat">
     <span class="season-stat-label">QUESTERS</span>
@@ -1574,15 +1574,18 @@
   </div>
   <div class="season-stat">
     <span class="season-stat-label">CURRENT WORLD</span>
-    <span class="season-stat-value">WORLD 2</span>
+    <span class="season-stat-value" id="statWorld">—</span>
   </div>
   <div class="season-stat">
     <span class="season-stat-label">NEXT BOSS BATTLE</span>
-    <span class="season-stat-value">WEEK 5</span>
+    <span class="season-stat-value" id="statBossBattle">—</span>
   </div>
 </div>
 
 <!-- PAGE TABS CONTENT -->
+<!-- Note: "Current World" shown here is generic season-wide info.
+     Since 6th/7th/8th have different World names, this shows the current WEEK NUMBER's
+     world label in a grade-neutral way (e.g. "World 2") set by the teacher. -->
 <div class="page-tabs">
 
   <!-- ── HOME TAB ── -->
@@ -2554,6 +2557,21 @@
         <div style="grid-column:1/-1;text-align:center;padding:2rem;">
           <span style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);">// Class data will appear here once the season begins</span>
         </div>`;
+    }
+
+    // Load season status (week, current world, next boss battle)
+    try {
+      const res2 = await fetch(`${APPS_SCRIPT_URL}?action=getSeasonStatus`);
+      const data2 = await res2.json();
+      const s = data2.status || {};
+      const weekEl = document.getElementById('statWeek');
+      const worldEl = document.getElementById('statWorld');
+      const bossEl = document.getElementById('statBossBattle');
+      if (weekEl) weekEl.textContent = s.Week ? `${s.Week} / 9` : '— / 9';
+      if (worldEl) worldEl.textContent = s.World || '—';
+      if (bossEl) bossEl.textContent = s.Boss_Battle || '—';
+    } catch(e) {
+      // Leave defaults if this fails
     }
   }
 
