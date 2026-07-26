@@ -161,6 +161,26 @@
     letter-spacing: 0.05em;
   }
 
+  .fullscreen-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--gold);
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .fullscreen-btn:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(255,215,0,0.3);
+  }
+
   /* ── MAIN GRID ── */
   .display-grid {
     flex: 1;
@@ -412,7 +432,10 @@
       <button class="grade-btn" data-grade="7th" onclick="setGrade('7th', this)">7th Grade</button>
       <button class="grade-btn" data-grade="8th" onclick="setGrade('8th', this)">8th Grade</button>
     </div>
-    <div class="topbar-clock" id="clock">--:--</div>
+    <div style="display:flex;align-items:center;gap:1.25rem;">
+      <div class="topbar-clock" id="clock">--:--</div>
+      <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶</button>
+    </div>
   </div>
 
   <!-- MAIN GRID -->
@@ -462,7 +485,7 @@
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcz_geFVeMpJHSIBR9R50mnz7oaxeWb3xuOJkk2iCry2FS1GV1_Wpfl3JZ3v7XiwTBdw/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzrpTsGpDMum8ykvJeU0a3a_SfbXbBSYQmijY6CgfNc5-6QqssMyLt89ZDwPhfUIWOG2Q/exec';
 
   let currentGrade = '6th';
 
@@ -493,6 +516,23 @@
   createParticles();
 
   // ── CLOCK ──
+  // ── FULLSCREEN TOGGLE ──
+  function toggleFullscreen() {
+    const btn = document.getElementById('fullscreenBtn');
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+      btn.textContent = '⛶';
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }
+
+  document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('fullscreenBtn');
+    btn.textContent = document.fullscreenElement ? '⤢' : '⛶';
+    btn.title = document.fullscreenElement ? 'Exit Fullscreen' : 'Enter Fullscreen';
+  });
+
   function updateClock() {
     const now = new Date();
     document.getElementById('clock').textContent = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
