@@ -2977,13 +2977,26 @@
     document.getElementById('dashXP').textContent   = xp.toLocaleString();
     document.getElementById('dashLevel').textContent = `// LEVEL ${level}`;
 
-    // XP progress bar (250 XP per level)
-    const xpIntoLevel = xp % 250;
-    const pct = Math.round((xpIntoLevel / 250) * 100);
+    // XP progress bar (tiered curve: 45/50/65/80 XP per level across 4 tiers)
+    // Cumulative XP thresholds for each level boundary
+    const levelThresholds = [0,45,90,135,180,225,275,325,375,425,475,525,590,655,720,785,850,930,1010,1090];
+    const currentLevelXP = levelThresholds[level - 1] !== undefined ? levelThresholds[level - 1] : levelThresholds[levelThresholds.length - 1];
+    const nextLevelXP = levelThresholds[level] !== undefined ? levelThresholds[level] : null;
+
     const xpBar = document.getElementById('dashXpBar');
     const xpToNext = document.getElementById('dashXpToNext');
-    if (xpBar) setTimeout(() => { xpBar.style.width = pct + '%'; }, 100);
-    if (xpToNext) xpToNext.textContent = `${xpIntoLevel} / 250 XP`;
+
+    if (nextLevelXP !== null) {
+      const xpIntoLevel = xp - currentLevelXP;
+      const xpNeededForLevel = nextLevelXP - currentLevelXP;
+      const pct = Math.round((xpIntoLevel / xpNeededForLevel) * 100);
+      if (xpBar) setTimeout(() => { xpBar.style.width = pct + '%'; }, 100);
+      if (xpToNext) xpToNext.textContent = `${xpIntoLevel} / ${xpNeededForLevel} XP`;
+    } else {
+      // Already at max Level 20
+      if (xpBar) setTimeout(() => { xpBar.style.width = '100%'; }, 100);
+      if (xpToNext) xpToNext.textContent = `MAX LEVEL`;
+    }
 
     // Keys
     document.getElementById('dashKeysRow').innerHTML = `
