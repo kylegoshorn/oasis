@@ -274,7 +274,7 @@
   /* ── RIGHT SIDE: 4 STACKED PANELS ── */
   .right-stack {
     display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
     gap: 1px;
     background: var(--border);
     overflow: hidden;
@@ -386,6 +386,37 @@
     font-size: 1.5rem;
   }
 
+  /* STANDARDS PANEL */
+  .standards-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+  }
+
+  .standards-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 1.15rem;
+    color: var(--white);
+    line-height: 1.4;
+  }
+
+  .standards-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--purple);
+    flex-shrink: 0;
+    background: rgba(123,47,255,0.12);
+    border: 1px solid rgba(123,47,255,0.35);
+    border-radius: 5px;
+    padding: 0.15rem 0.55rem;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
   /* ── BOTTOM BAR: WEEKLY GOAL ── */
   /* Weekly Goal text now lives inside a regular panel */
 
@@ -470,6 +501,13 @@
         <div class="panel-title">🎯 Success Looks Like</div>
         <ul class="success-list" id="successList" style="padding:0;">
           <li class="empty-note">// No success criteria posted yet</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">📐 Standards</div>
+        <ul class="standards-list" id="standardsList" style="padding:0;">
+          <li class="empty-note">// No standards posted yet</li>
         </ul>
       </div>
 
@@ -614,10 +652,12 @@
   async function loadClassContent() {
     const planList = document.getElementById('planList');
     const successList = document.getElementById('successList');
+    const standardsList = document.getElementById('standardsList');
     const goalText = document.getElementById('weeklyGoalText');
 
     planList.innerHTML = '<li class="empty-note">// Loading...</li>';
     successList.innerHTML = '<li class="empty-note">// Loading...</li>';
+    standardsList.innerHTML = '<li class="empty-note">// Loading...</li>';
     goalText.textContent = 'Loading...';
 
     try {
@@ -635,11 +675,23 @@
         ? successItems.map(item => `<li class="success-item">${escapeHtml(item)}</li>`).join('')
         : '<li class="empty-note">// No success criteria posted yet</li>';
 
+      // Standards format: "CODE :: Description" per line, joined with |
+      const standardsItems = (c.Standards || '').split('|').map(s => s.trim()).filter(Boolean);
+      standardsList.innerHTML = standardsItems.length
+        ? standardsItems.map(item => {
+            const parts = item.split('::').map(s => s.trim());
+            const code = parts[0] || '';
+            const desc = parts.length > 1 ? parts.slice(1).join('::').trim() : '';
+            return `<li class="standards-item"><span class="standards-code">${escapeHtml(code)}</span><span>${escapeHtml(desc)}</span></li>`;
+          }).join('')
+        : '<li class="empty-note">// No standards posted yet</li>';
+
       goalText.textContent = c.Weekly_Goal && c.Weekly_Goal.trim() ? c.Weekly_Goal : 'No goal posted yet for this grade';
 
     } catch(e) {
       planList.innerHTML = '<li class="empty-note">// Could not load — check connection</li>';
       successList.innerHTML = '<li class="empty-note">// Could not load</li>';
+      standardsList.innerHTML = '<li class="empty-note">// Could not load</li>';
       goalText.textContent = 'Could not load';
     }
   }

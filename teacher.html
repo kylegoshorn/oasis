@@ -965,6 +965,13 @@
         <textarea id="cdSuccess" placeholder="I can explain what an HTML tag does&#10;I can identify the head and body of a webpage&#10;I can write a basic HTML structure" style="width:100%;height:90px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.85rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
       </div>
 
+      <!-- STANDARDS -->
+      <div style="margin-bottom:1.5rem;">
+        <label class="ab-label">📐 Standards (format: CODE :: Description — one per line)</label>
+        <textarea id="cdStandards" placeholder="IN.CS.6.CT.1 :: Decompose problems into smaller parts&#10;IN.CS.6.NI.2 :: Explain how the internet enables communication" style="width:100%;height:90px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'JetBrains Mono',monospace;font-size:0.8rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
+        <p style="font-size:0.65rem;color:var(--muted);margin-top:0.4rem;">Use <code style="color:var(--cyan);">::</code> to separate the standard code from its description, e.g. <code style="color:var(--cyan);">IN.CS.6.CT.1 :: Decompose problems</code></p>
+      </div>
+
       <!-- CHECKLIST -->
       <div style="margin-bottom:1.5rem;">
         <label class="ab-label">☑️ Student Checklist (short items, one per line)</label>
@@ -1639,6 +1646,7 @@
       Weekly_Goal: document.getElementById('cdWeeklyGoal').value,
       Plan: document.getElementById('cdPlan').value,
       Success_Criteria: document.getElementById('cdSuccess').value,
+      Standards: document.getElementById('cdStandards').value,
       Checklist: document.getElementById('cdChecklist').value
     };
   }
@@ -1662,6 +1670,7 @@
     document.getElementById('cdWeeklyGoal').value = c.Weekly_Goal || '';
     document.getElementById('cdPlan').value = (c.Plan || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
     document.getElementById('cdSuccess').value = (c.Success_Criteria || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
+    document.getElementById('cdStandards').value = (c.Standards || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
     document.getElementById('cdChecklist').value = (c.Checklist || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
   }
 
@@ -1673,6 +1682,7 @@
     const weeklyGoal = document.getElementById('cdWeeklyGoal').value.trim();
     const plan = document.getElementById('cdPlan').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
     const success = document.getElementById('cdSuccess').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
+    const standards = document.getElementById('cdStandards').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
     const checklist = document.getElementById('cdChecklist').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
 
     try {
@@ -1682,12 +1692,13 @@
         Weekly_Goal: weeklyGoal,
         Plan: plan,
         Success_Criteria: success,
+        Standards: standards,
         Checklist: checklist
       });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) {
-        cdCache[cdCurrentGrade] = { Weekly_Goal: weeklyGoal, Plan: plan, Success_Criteria: success, Checklist: checklist };
+        cdCache[cdCurrentGrade] = { Weekly_Goal: weeklyGoal, Plan: plan, Success_Criteria: success, Standards: standards, Checklist: checklist };
         status.textContent = `// ✅ Saved for ${cdCurrentGrade} Grade`;
         status.style.color = 'var(--green)';
         showToast(`// ${cdCurrentGrade} Grade display updated`);
