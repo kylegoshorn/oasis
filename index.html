@@ -1604,6 +1604,19 @@
       </div>
     </section>
 
+    <!-- BOSS BATTLE REVEAL (auto-shows on Weeks 3, 6, 9) -->
+    <section id="bossRevealSection" style="padding:0 2rem 1.5rem; display:none;">
+      <div class="container">
+        <div id="bossRevealCard" style="border-radius:14px; overflow:hidden; border:2px solid var(--gold); box-shadow:0 0 40px rgba(255,215,0,0.25); position:relative;">
+          <img id="bossRevealImg" src="" alt="Boss Battle" style="width:100%; display:block;">
+          <div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(0,0,0,0.85)); padding:2rem 1.5rem 1.5rem; text-align:center;">
+            <p style="font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--cyan); letter-spacing:0.2em; margin-bottom:0.4rem;">⚠ BOSS BATTLE INCOMING ⚠</p>
+            <p id="bossRevealText" style="font-family:'Orbitron',sans-serif; font-weight:900; font-size:1.3rem; color:var(--gold);"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- WEEKLY CHAMPION -->
     <section style="padding:1.5rem 2rem;">
       <div class="container">
@@ -2570,6 +2583,27 @@
       if (weekEl) weekEl.textContent = s.Week ? `${s.Week} / 9` : '— / 9';
       if (worldEl) worldEl.textContent = s.World || '—';
       if (bossEl) bossEl.textContent = s.Boss_Battle || '—';
+
+      // Auto-reveal boss battle poster on Weeks 3, 6, 9
+      const bossImages = {
+        '3': { src: 'boss1_glitch_warden.jpg', name: 'The Glitch Warden', key: 'Copper Key' },
+        '6': { src: 'boss2_firewall_titan.jpg', name: 'The Firewall Titan', key: 'Jade Key' },
+        '9': { src: 'boss3_cipher_serpent.jpg', name: 'The Cipher Serpent', key: 'Crystal Key' },
+      };
+      const revealSection = document.getElementById('bossRevealSection');
+      const revealImg = document.getElementById('bossRevealImg');
+      const revealText = document.getElementById('bossRevealText');
+      const currentWeek = String(s.Week || '').trim();
+
+      if (bossImages[currentWeek] && revealSection) {
+        const boss = bossImages[currentWeek];
+        revealImg.src = boss.src;
+        revealImg.alt = boss.name;
+        revealText.textContent = `${boss.name} — Pass to earn the ${boss.key}`;
+        revealSection.style.display = 'block';
+      } else if (revealSection) {
+        revealSection.style.display = 'none';
+      }
     } catch(e) {
       // Leave defaults if this fails
     }
