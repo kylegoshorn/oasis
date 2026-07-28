@@ -373,6 +373,38 @@
 
   .world-card:hover::before { opacity: 1; }
 
+  .world-card.locked {
+    opacity: 0.55;
+    filter: grayscale(0.6);
+  }
+
+  .world-card.locked:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: var(--border);
+  }
+
+  .world-card.unlocked-live {
+    border-color: rgba(0,255,136,0.4);
+    box-shadow: 0 0 20px rgba(0,255,136,0.08);
+  }
+
+  .world-card.completed-live {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(255,215,0,0.15);
+  }
+
+  .world-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.75rem;
+    letter-spacing: 0.02em;
+  }
+
+  .world-card.unlocked-live .world-status { color: var(--green); }
+  .world-card.completed-live .world-status { color: var(--gold); }
+
   .world-num {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
@@ -1657,39 +1689,31 @@
       <div class="container">
         <p class="section-eyebrow">// Season Map</p>
         <h2 class="section-title">The <span>Worlds</span></h2>
-        <p class="section-desc">Five worlds stand between you and Crystal Key mastery. Each world unlocks new skills and ends with a Boss Battle.</p>
-        <div class="worlds-grid">
-          <div class="world-card">
+        <p class="section-desc">Three worlds stand between you and Crystal Key mastery. Earning a Key unlocks the next World — log in to see your own progress.</p>
+        <div class="worlds-grid" id="worldsGrid">
+          <div class="world-card" id="worldCard1">
             <p class="world-num">WORLD 01</p>
             <span class="world-icon">🛡️</span>
-            <p class="world-name">Digital Citizenship</p>
-            <p class="world-desc">Navigate the digital world with integrity. Learn online safety, ethics, and responsibility.</p>
+            <p class="world-name">The First Trial</p>
+            <p class="world-desc">Your journey begins here. Master the fundamentals and prepare for your first Boss Battle.</p>
+            <p class="world-status" id="worldStatus1">🔓 Unlocked — Start Here</p>
           </div>
-          <div class="world-card">
+          <div class="world-card locked" id="worldCard2">
             <p class="world-num">WORLD 02</p>
             <span class="world-icon">⚡</span>
-            <p class="world-name">Productivity Tools</p>
-            <p class="world-desc">Master the tools professionals use. Docs, Sheets, Slides, and workflows that get things done.</p>
+            <p class="world-name">The Deepening</p>
+            <p class="world-desc">Build on what you've learned. New skills, new challenges, new stakes.</p>
+            <p class="world-status" id="worldStatus2">🔒 Locked — Earn the Copper Key to unlock</p>
           </div>
-          <div class="world-card">
+          <div class="world-card locked" id="worldCard3">
             <p class="world-num">WORLD 03</p>
-            <span class="world-icon">🌐</span>
-            <p class="world-name">Web Design</p>
-            <p class="world-desc">Build your first corner of the internet. HTML, CSS, and the art of making things look great.</p>
-          </div>
-          <div class="world-card">
-            <p class="world-num">WORLD 04</p>
-            <span class="world-icon">💻</span>
-            <p class="world-name">Programming</p>
-            <p class="world-desc">Learn to speak the language of machines. Variables, loops, conditions, and logic.</p>
-          </div>
-          <div class="world-card">
-            <p class="world-num">WORLD 05</p>
-            <span class="world-icon">🚀</span>
-            <p class="world-name">Innovation Project</p>
-            <p class="world-desc">Build something that matters. Your final project, your vision, your legacy in the OASIS.</p>
+            <span class="world-icon">🔮</span>
+            <p class="world-name">The Final Ascent</p>
+            <p class="world-desc">The last stretch. Prove your mastery in the Final Boss Battle and claim the Crystal Key.</p>
+            <p class="world-status" id="worldStatus3">🔒 Locked — Earn the Jade Key to unlock</p>
           </div>
         </div>
+        <p style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);margin-top:1.5rem;text-align:center;">// Log in to see which Worlds YOU have unlocked based on your own Keys earned</p>
       </div>
     </section>
   </div>
@@ -2998,6 +3022,54 @@
     }
   }
 
+  // ── WORLD LOCK/UNLOCK LOGIC (based on student's own Keys) ──
+  function updateWorldLockStates(copper, jade, crystal) {
+    const card1 = document.getElementById('worldCard1');
+    const card2 = document.getElementById('worldCard2');
+    const card3 = document.getElementById('worldCard3');
+    const status1 = document.getElementById('worldStatus1');
+    const status2 = document.getElementById('worldStatus2');
+    const status3 = document.getElementById('worldStatus3');
+
+    if (!card1 || !card2 || !card3) return;
+
+    // World 1: always unlocked. Completed once Copper Key earned.
+    card1.classList.remove('locked', 'unlocked-live', 'completed-live');
+    if (copper) {
+      card1.classList.add('completed-live');
+      status1.textContent = '✅ Completed — Copper Key earned';
+    } else {
+      card1.classList.add('unlocked-live');
+      status1.textContent = '🔓 Unlocked — In Progress';
+    }
+
+    // World 2: unlocked once Copper Key earned. Completed once Jade Key earned.
+    card2.classList.remove('locked', 'unlocked-live', 'completed-live');
+    if (jade) {
+      card2.classList.add('completed-live');
+      status2.textContent = '✅ Completed — Jade Key earned';
+    } else if (copper) {
+      card2.classList.add('unlocked-live');
+      status2.textContent = '🔓 Unlocked — In Progress';
+    } else {
+      card2.classList.add('locked');
+      status2.textContent = '🔒 Locked — Earn the Copper Key to unlock';
+    }
+
+    // World 3: unlocked once Jade Key earned. Completed once Crystal Key earned.
+    card3.classList.remove('locked', 'unlocked-live', 'completed-live');
+    if (crystal) {
+      card3.classList.add('completed-live');
+      status3.textContent = '👑 Completed — Crystal Key earned! Season Complete!';
+    } else if (jade) {
+      card3.classList.add('unlocked-live');
+      status3.textContent = '🔓 Unlocked — In Progress';
+    } else {
+      card3.classList.add('locked');
+      status3.textContent = '🔒 Locked — Earn the Jade Key to unlock';
+    }
+  }
+
   function renderStudentDashboard(s) {
     const xp    = Number(s.Current_XP) || 0;
     const level = Number(s.Current_Level) || 1;
@@ -3038,6 +3110,9 @@
       <span class="dash-key-badge ${jade?'jade':'crystal-locked'}">${jade?'🗝 Jade':'🔒 Jade'}</span>
       <span class="dash-key-badge ${crystal?'jade':'crystal-locked'}">${crystal?'🗝 Crystal':'🔒 Crystal'}</span>
     `;
+
+    // Update Worlds tab lock/unlock state based on this student's actual Keys
+    updateWorldLockStates(copper, jade, crystal);
 
     // Grade label
     const gradeLabel = document.getElementById('dashGradeLabel');
