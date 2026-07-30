@@ -274,7 +274,7 @@
   /* ── RIGHT SIDE: 4 STACKED PANELS ── */
   .right-stack {
     display: grid;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
     gap: 1px;
     background: var(--border);
     overflow: hidden;
@@ -418,7 +418,7 @@
   }
 
   /* ── BOTTOM BAR: WEEKLY GOAL ── */
-  /* Weekly Goal text now lives inside a regular panel */
+  /* Class content panels: Plan, Success Criteria, Standards */
 
   .goalbar-text {
     font-size: 1.9rem;
@@ -511,11 +511,6 @@
         </ul>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">🎯 Weekly Goal</div>
-        <p class="goalbar-text" id="weeklyGoalText" style="margin-top:0;">Loading...</p>
-      </div>
-
     </div>
 
   </div>
@@ -523,7 +518,7 @@
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzm-Btqe4V13IaShfCW_uFTZHbUR4dTmdNwG73HHIi1WQ74IhLXS9m31Fx3qB6jAvy4tg/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbMKvgaNXgocafspvrv1SDrhQwEabRyvhAA53rx8aQMxQ7pqzpF88m7uxVCVaX66s16g/exec';
 
   let currentGrade = '6th';
 
@@ -648,17 +643,15 @@
     }
   }
 
-  // ── CLASS CONTENT (Plan, Success, Weekly Goal) ──
+  // ── CLASS CONTENT (Plan, Success, Standards) ──
   async function loadClassContent() {
     const planList = document.getElementById('planList');
     const successList = document.getElementById('successList');
     const standardsList = document.getElementById('standardsList');
-    const goalText = document.getElementById('weeklyGoalText');
 
     planList.innerHTML = '<li class="empty-note">// Loading...</li>';
     successList.innerHTML = '<li class="empty-note">// Loading...</li>';
     standardsList.innerHTML = '<li class="empty-note">// Loading...</li>';
-    goalText.textContent = 'Loading...';
 
     try {
       const res = await fetch(`${APPS_SCRIPT_URL}?action=getClassContent&Grade=${currentGrade}`);
@@ -686,13 +679,10 @@
           }).join('')
         : '<li class="empty-note">// No standards posted yet</li>';
 
-      goalText.textContent = c.Weekly_Goal && c.Weekly_Goal.trim() ? c.Weekly_Goal : 'No goal posted yet for this grade';
-
     } catch(e) {
       planList.innerHTML = '<li class="empty-note">// Could not load — check connection</li>';
       successList.innerHTML = '<li class="empty-note">// Could not load</li>';
       standardsList.innerHTML = '<li class="empty-note">// Could not load</li>';
-      goalText.textContent = 'Could not load';
     }
   }
 
