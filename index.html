@@ -2225,7 +2225,7 @@
     </div>
     <div class="ab-footer">
       <button class="ab-cancel" onclick="closeAvatar()">Cancel</button>
-      <button class="ab-submit" onclick="submitIdentity()">⚡ Enter the OASIS</button>
+      <button class="ab-submit" id="registerSubmitBtn" onclick="submitIdentity()">⚡ Enter the OASIS</button>
     </div>
   </div>
 </div>
@@ -2849,7 +2849,8 @@
     if (!tag) { document.getElementById('gamerTag').focus(); return; }
 
     const avatarString = document.getElementById('avatarString').textContent;
-    const btn = document.querySelector('.ab-submit');
+    const btn = document.getElementById('registerSubmitBtn');
+    if (btn.disabled) return; // guard against any duplicate-fire race
     btn.textContent = '// Entering OASIS...';
     btn.disabled = true;
 
