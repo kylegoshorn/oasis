@@ -518,7 +518,7 @@
 </div>
 
 <script>
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzbMKvgaNXgocafspvrv1SDrhQwEabRyvhAA53rx8aQMxQ7pqzpF88m7uxVCVaX66s16g/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyGNuCWCdKWyR8-mnVMFgU8LMQNcqV-Nr1TH35A4JO_EfZx1SnvOmQq7B0X-v_ToG8xEw/exec';
 
   let currentGrade = '6th';
 
@@ -609,36 +609,35 @@
         }).join('');
       }
 
-      // Class Competition
-      const validClasses = (data.classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
+    } catch(e) {
+      lbList.innerHTML = '<p class="empty-note">// Could not load leaderboard</p>';
+    }
+
+    // Class Competition — live-calculated average XP per period
+    try {
+      const compRes = await fetch(`${APPS_SCRIPT_URL}?action=getClassCompetition`);
+      const compData = await compRes.json();
+      const validClasses = (compData.classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
+
       if (validClasses.length === 0) {
         compList.innerHTML = '<p class="empty-note">// Class data appears each Friday</p>';
       } else {
-        const scored = validClasses.map(c => {
-          const avgXP = Number(c.Average_XP_Per_Student) || 0;
-          const comp = parseFloat(c.Quest_Completion_Rate) || 0;
-          return { ...c, avgXP, comp, score: (avgXP * 0.6) + (comp * 0.4) };
-        }).sort((a,b) => b.score - a.score);
-        const maxScore = scored[0]?.score || 0;
+        const scored = validClasses.map(c => ({ ...c, avgXP: Number(c.Average_XP_Per_Student) || 0 }))
+          .sort((a,b) => b.avgXP - a.avgXP);
+        const maxAvg = scored[0]?.avgXP || 0;
 
         compList.innerHTML = scored.map(c => {
-          const isWinner = c.score === maxScore && maxScore > 0;
+          const isWinner = c.avgXP === maxAvg && maxAvg > 0;
           return `
             <div class="comp-card ${isWinner?'winner':''}">
               <div class="comp-period-row">
                 <span class="comp-period-name">${isWinner?'👑 ':''}Period ${c.Class_Period}</span>
-                <span class="comp-score">${c.score.toFixed(1)} pts</span>
-              </div>
-              <div class="comp-stats-row">
-                <span>Avg XP: <strong>${c.avgXP}</strong></span>
-                <span>Completion: <strong>${c.Quest_Completion_Rate || '0%'}</strong></span>
+                <span class="comp-score">${c.avgXP.toFixed(1)} avg XP</span>
               </div>
             </div>`;
         }).join('');
       }
-
     } catch(e) {
-      lbList.innerHTML = '<p class="empty-note">// Could not load leaderboard</p>';
       compList.innerHTML = '<p class="empty-note">// Could not load</p>';
     }
   }
