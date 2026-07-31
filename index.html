@@ -1754,7 +1754,7 @@
           <span style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--muted);" id="compLastUpdated">// Last updated: —</span>
         </div>
         <div style="font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);margin-bottom:1rem;">
-          // Score = (Avg XP × 0.6) + (Completion Rate × 0.4)
+          // Ranked by Average XP per student
         </div>
         <div class="comp-grid" id="compGrid">
           <div style="grid-column:1/-1;text-align:center;padding:2rem;">
@@ -2579,12 +2579,23 @@
 
   // ── LIVE DATA ──
   async function loadOASISData() {
+    let liveClasses = [];
     try {
       const res = await fetch(APPS_SCRIPT_URL);
       const data = await res.json();
       renderLeaderboard(data.students || []);
-      renderClassComp(data.classes || []);
-      renderHomeTab(data.students || [], data.classes || [], data.achievements || []);
+
+      // Fetch live class competition data once, reuse for both the Classes tab and Home tab champion
+      try {
+        const compRes = await fetch(`${APPS_SCRIPT_URL}?action=getClassCompetition`);
+        const compData = await compRes.json();
+        liveClasses = compData.classes || [];
+      } catch(e) {
+        liveClasses = [];
+      }
+
+      renderClassComp(liveClasses);
+      renderHomeTab(data.students || [], liveClasses, data.achievements || []);
     } catch(e) {
       document.getElementById('lbBody').innerHTML = `
         <div class="lb-row" style="justify-content:center;padding:2rem;">
@@ -2724,19 +2735,14 @@
       return;
     }
 
-    // Combined score: (Avg XP × 0.6) + (Completion Rate % × 0.4)
-    const scored = valid.map(c => {
-      const avgXP = Number(c.Average_XP_Per_Student) || 0;
-      const completionNum = parseFloat(c.Quest_Completion_Rate) || 0;
-      const score = (avgXP * 0.6) + (completionNum * 0.4);
-      return { ...c, avgXP, completionNum, score };
-    });
+    // Ranked purely by Average XP per student
+    const scored = valid.map(c => ({ ...c, avgXP: Number(c.Average_XP_Per_Student) || 0 }));
 
-    const maxScore = Math.max(...scored.map(c => c.score));
-    const maxAvg   = Math.max(...scored.map(c => c.avgXP)) || 1;
+    const maxAvg = Math.max(...scored.map(c => c.avgXP)) || 1;
+    const sorted = [...scored].sort((a,b) => b.avgXP - a.avgXP);
 
-    grid.innerHTML = scored.map(c => {
-      const isWinner = c.score === maxScore && maxScore > 0;
+    grid.innerHTML = sorted.map(c => {
+      const isWinner = c.avgXP === maxAvg && maxAvg > 0;
       const compPct  = Math.round((c.avgXP / maxAvg) * 100);
 
       return `
@@ -2745,18 +2751,9 @@
           <p class="comp-period">Period ${c.Class_Period}</p>
           <p class="comp-name">${isWinner ? '⚡ This Week\'s Leader' : 'Class '+c.Class_Period}</p>
           <div class="comp-stat">
-            <p class="comp-stat-label">Completion Rate</p>
-            <div class="comp-bar"><div class="comp-bar-fill" style="width:${Math.min(c.completionNum,100)}%"></div></div>
-            <p class="comp-val">${c.Quest_Completion_Rate || '0%'}</p>
-          </div>
-          <div class="comp-stat">
             <p class="comp-stat-label">Avg XP Per Student</p>
             <div class="comp-bar"><div class="comp-bar-fill cyan" style="width:${compPct}%"></div></div>
-            <p class="comp-val" style="color:var(--cyan)">${c.avgXP} XP</p>
-          </div>
-          <div style="margin-top:0.5rem;padding-top:0.5rem;border-top:1px solid rgba(255,255,255,0.06);">
-            <p class="comp-stat-label">Combined Score</p>
-            <p class="comp-val" style="color:${isWinner?'var(--gold)':'var(--white)'};">${c.score.toFixed(1)}</p>
+            <p class="comp-val" style="color:var(--cyan)">${c.avgXP.toFixed(1)} XP</p>
           </div>
         </div>`;
     }).join('');
@@ -2771,11 +2768,8 @@
       if (validClasses.length === 0) {
         champion.innerHTML = `<div style="background:linear-gradient(135deg,rgba(255,215,0,0.08),rgba(123,47,255,0.08));border:1px solid rgba(255,215,0,0.3);border-radius:10px;padding:2rem;text-align:center;"><p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Class competition data will appear here each Friday</p></div>`;
       } else {
-        const scored = validClasses.map(c => {
-          const avgXP = Number(c.Average_XP_Per_Student) || 0;
-          const comp = parseFloat(c.Quest_Completion_Rate) || 0;
-          return { ...c, score: (avgXP * 0.6) + (comp * 0.4) };
-        }).sort((a,b) => b.score - a.score);
+        const scored = validClasses.map(c => ({ ...c, avgXP: Number(c.Average_XP_Per_Student) || 0 }))
+          .sort((a,b) => b.avgXP - a.avgXP);
         const winner = scored[0];
         champion.innerHTML = `
           <div style="background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(123,47,255,0.08));border:1px solid rgba(255,215,0,0.4);border-radius:10px;padding:2rem;text-align:center;">
@@ -2783,9 +2777,7 @@
             <p style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.4rem;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.3rem;">PERIOD ${winner.Class_Period}</p>
             <p style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:1rem;">This Week's Leading Class</p>
             <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
-              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--gold);font-weight:700;">${winner.score.toFixed(1)}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">SCORE</p></div>
-              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--cyan);font-weight:700;">${Number(winner.Average_XP_Per_Student)||0}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">AVG XP</p></div>
-              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--green);font-weight:700;">${winner.Quest_Completion_Rate||'0%'}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">COMPLETION</p></div>
+              <div style="text-align:center;"><p style="font-family:'Orbitron',sans-serif;font-size:1.2rem;color:var(--cyan);font-weight:700;">${winner.avgXP.toFixed(1)}</p><p style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);">AVG XP</p></div>
             </div>
           </div>`;
       }
