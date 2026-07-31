@@ -465,8 +465,17 @@
     </div>
     <div style="display:flex;align-items:center;gap:1.25rem;">
       <div class="topbar-clock" id="clock">--:--</div>
+      <button class="fullscreen-btn" id="bellTimerBtn" onclick="startBellTimer()" title="Start 5-Minute Bell Work Timer">⏱ Bell Work</button>
       <button class="fullscreen-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Toggle Fullscreen">⛶</button>
     </div>
+  </div>
+
+  <!-- BELL WORK TIMER OVERLAY -->
+  <div id="bellTimerOverlay" style="display:none;position:fixed;inset:0;background:rgba(5,5,15,0.96);z-index:9999;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(8px);">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:1rem;letter-spacing:0.2em;color:var(--cyan);text-transform:uppercase;margin-bottom:1.5rem;">⏱ Bell Work — Time Remaining</p>
+    <p id="bellTimerDisplay" style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:12rem;line-height:1;color:var(--gold);text-shadow:0 0 40px rgba(255,215,0,0.4);">5:00</p>
+    <p id="bellTimerSubtext" style="font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--muted);margin-top:1.5rem;">Answer today's Bell Work questions now</p>
+    <button onclick="cancelBellTimer()" style="margin-top:2.5rem;background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.75rem;padding:0.6rem 1.5rem;border-radius:6px;cursor:pointer;">Cancel Timer</button>
   </div>
 
   <!-- MAIN GRID -->
@@ -547,6 +556,49 @@
     }
   }
   createParticles();
+
+  // ── BELL WORK TIMER ──
+  let bellTimerInterval = null;
+
+  function startBellTimer() {
+    const overlay = document.getElementById('bellTimerOverlay');
+    const display = document.getElementById('bellTimerDisplay');
+    const subtext = document.getElementById('bellTimerSubtext');
+    let secondsLeft = 5 * 60; // 5 minutes
+
+    overlay.style.display = 'flex';
+    subtext.textContent = "Answer today's Bell Work questions now";
+    display.style.color = 'var(--gold)';
+
+    function render() {
+      const m = Math.floor(secondsLeft / 60);
+      const s = secondsLeft % 60;
+      display.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+      if (secondsLeft <= 30 && secondsLeft > 0) {
+        display.style.color = '#FF4757'; // red warning in final 30 seconds
+      }
+    }
+    render();
+
+    if (bellTimerInterval) clearInterval(bellTimerInterval);
+    bellTimerInterval = setInterval(() => {
+      secondsLeft--;
+      if (secondsLeft <= 0) {
+        clearInterval(bellTimerInterval);
+        display.textContent = "TIME'S UP";
+        display.style.color = '#FF4757';
+        subtext.textContent = "Pencils down — let's move on!";
+        setTimeout(() => { overlay.style.display = 'none'; }, 4000);
+        return;
+      }
+      render();
+    }, 1000);
+  }
+
+  function cancelBellTimer() {
+    if (bellTimerInterval) clearInterval(bellTimerInterval);
+    document.getElementById('bellTimerOverlay').style.display = 'none';
+  }
 
   // ── CLOCK ──
   // ── FULLSCREEN TOGGLE ──
