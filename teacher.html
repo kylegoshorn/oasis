@@ -1358,19 +1358,29 @@
 
     let successCount = 0;
     let failCount = 0;
+    const BATCH_SIZE = 5; // send a handful at a time to avoid overwhelming Apps Script
 
-    // Fire all requests in parallel for speed
-    await Promise.all(targets.map(async s => {
-      try {
-        const params = new URLSearchParams({ action: 'updateXP', OASIS_ID: s.OASIS_ID, Delta: amount });
-        const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
-        const result = await res.json();
-        if (result.success) successCount++;
-        else failCount++;
-      } catch (e) {
-        failCount++;
+    for (let i = 0; i < targets.length; i += BATCH_SIZE) {
+      const batch = targets.slice(i, i + BATCH_SIZE);
+      preview.textContent = `// Awarding XP... ${Math.min(i + BATCH_SIZE, targets.length)}/${targets.length}`;
+
+      await Promise.all(batch.map(async s => {
+        try {
+          const params = new URLSearchParams({ action: 'updateXP', OASIS_ID: s.OASIS_ID, Delta: amount });
+          const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+          const result = await res.json();
+          if (result.success) successCount++;
+          else failCount++;
+        } catch (e) {
+          failCount++;
+        }
+      }));
+
+      // Small pause between batches to further ease load on Apps Script
+      if (i + BATCH_SIZE < targets.length) {
+        await new Promise(r => setTimeout(r, 300));
       }
-    }));
+    }
 
     if (failCount === 0) {
       showToast(`// ⚡ +${amount} XP awarded to ${successCount} students!`);
@@ -1378,7 +1388,7 @@
       preview.style.color = 'var(--green)';
     } else {
       showToast(`// ${successCount} succeeded, ${failCount} failed`, true);
-      preview.textContent = `// ${successCount} succeeded, ${failCount} failed — refresh and try again.`;
+      preview.textContent = `// ${successCount} succeeded, ${failCount} failed — click Award to Class again to retry the rest.`;
       preview.style.color = 'var(--red)';
     }
 
