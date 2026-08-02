@@ -449,6 +449,45 @@
 </head>
 <body>
 
+<!-- PASSWORD GATE -->
+<div id="passwordGate" style="position:fixed;inset:0;background:#0A0A14;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="text-align:center;max-width:400px;padding:2rem;">
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:#00D9E8;text-transform:uppercase;margin-bottom:0.75rem;">⚠ Restricted Access</p>
+    <p style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.6rem;color:#F5F5F7;margin-bottom:1.5rem;">Teacher Console</p>
+    <input type="password" id="dashboardPasswordInput" placeholder="Enter password" autocomplete="off"
+      style="width:100%;padding:0.85rem 1rem;background:#13132A;border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#F5F5F7;font-family:'JetBrains Mono',monospace;font-size:0.95rem;text-align:center;outline:none;margin-bottom:1rem;"
+      onkeydown="if(event.key==='Enter') checkDashboardPassword()">
+    <button onclick="checkDashboardPassword()"
+      style="width:100%;padding:0.85rem 1rem;background:#FFD54A;border:none;border-radius:8px;color:#0A0A14;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:0.85rem;letter-spacing:0.05em;cursor:pointer;">
+      UNLOCK
+    </button>
+    <p id="passwordError" style="color:#FF4757;font-family:'JetBrains Mono',monospace;font-size:0.75rem;margin-top:1rem;display:none;">Incorrect password. Try again.</p>
+  </div>
+</div>
+
+<script>
+  // Teacher-only secret — must match TEACHER_SECRET in Code.gs exactly.
+  const DASHBOARD_PASSWORD = 'Eleanor';
+  const TEACHER_KEY = 'CHOOSE_A_LONG_RANDOM_STRING_HERE'; // must match TEACHER_SECRET in Code.gs
+
+  function checkDashboardPassword() {
+    const input = document.getElementById('dashboardPasswordInput').value;
+    if (input === DASHBOARD_PASSWORD) {
+      document.getElementById('passwordGate').style.display = 'none';
+      sessionStorage.setItem('oasisTeacherAuth', 'true');
+    } else {
+      document.getElementById('passwordError').style.display = 'block';
+    }
+  }
+
+  // Skip the gate if already unlocked this browser session
+  if (sessionStorage.getItem('oasisTeacherAuth') === 'true') {
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('passwordGate').style.display = 'none';
+    });
+  }
+</script>
+
 <header>
   <div>
     <div class="header-title">THE OASIS <span>// TEACHER CONSOLE</span></div>
@@ -1179,7 +1218,7 @@
     if (!delta || isNaN(delta)) { showToast('// Enter a valid XP amount', true); return; }
 
     try {
-      const params = new URLSearchParams({ action: 'updateXP', OASIS_ID: oasisId, Delta: delta });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action: 'updateXP', OASIS_ID: oasisId, Delta: delta });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) {
@@ -1197,7 +1236,7 @@
   // ── ACTIONS: KEYS ──
   async function toggleKey(oasisId, keyName, newValue) {
     try {
-      const params = new URLSearchParams({ action: 'toggleKey', OASIS_ID: oasisId, Key: keyName, Value: newValue });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action: 'toggleKey', OASIS_ID: oasisId, Key: keyName, Value: newValue });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) {
@@ -1266,7 +1305,7 @@
 
     try {
       const params = new URLSearchParams({
-        action: 'awardAchievement',
+        key: TEACHER_KEY, action: 'awardAchievement',
         OASIS_ID: oasisId,
         Achievement_Type: achievementType,
         Season: 'Fall_2026'
@@ -1366,7 +1405,7 @@
 
       await Promise.all(batch.map(async s => {
         try {
-          const params = new URLSearchParams({ action: 'updateXP', OASIS_ID: s.OASIS_ID, Delta: amount });
+          const params = new URLSearchParams({ key: TEACHER_KEY, action: 'updateXP', OASIS_ID: s.OASIS_ID, Delta: amount });
           const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
           const result = await res.json();
           if (result.success) successCount++;
@@ -1484,7 +1523,7 @@
     status.textContent = '// Posting...';
     try {
       const id = 'ASG-' + Date.now();
-      const params = new URLSearchParams({ action:'saveAssignment', ID:id, Title:title, Type:type, Grade:grade, Due_Date:due, World:world, Description:desc, Season:'Fall_2026' });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action:'saveAssignment', ID:id, Title:title, Type:type, Grade:grade, Due_Date:due, World:world, Description:desc, Season:'Fall_2026' });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) {
@@ -1506,7 +1545,7 @@
   async function deleteAssignment(id) {
     if (!id || !confirm('Delete this assignment?')) return;
     try {
-      const params = new URLSearchParams({ action:'deleteAssignment', ID:id });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action:'deleteAssignment', ID:id });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) { showToast('// Assignment deleted'); loadAssignments(); }
@@ -1551,7 +1590,7 @@
 
     status.textContent = '// Posting...';
     try {
-      const params = new URLSearchParams({ action:'saveAnnouncement', Text:text, Label:label, Type:type, Date:new Date().toISOString().split('T')[0] });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action:'saveAnnouncement', Text:text, Label:label, Type:type, Date:new Date().toISOString().split('T')[0] });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) {
@@ -1572,7 +1611,7 @@
   async function clearAnnouncement() {
     if (!confirm('Clear the current announcement banner?')) return;
     try {
-      const params = new URLSearchParams({ action:'saveAnnouncement', Text:'', Label:'', Type:'info', Date:'' });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action:'saveAnnouncement', Text:'', Label:'', Type:'info', Date:'' });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) { showToast('// Banner cleared'); currentAnnouncement = null; renderAnnouncementPreview(); }
@@ -1629,7 +1668,7 @@
     btn.textContent = '...';
     btn.disabled = true;
     try {
-      const params = new URLSearchParams({ action:'resolveHelpRequest', ID:id });
+      const params = new URLSearchParams({ key: TEACHER_KEY, action:'resolveHelpRequest', ID:id });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
       const result = await res.json();
       if (result.success) { showToast('// Help request resolved ✅'); loadHelpRequests(); }
@@ -1697,7 +1736,7 @@
 
     try {
       const params = new URLSearchParams({
-        action: 'saveClassContent',
+        key: TEACHER_KEY, action: 'saveClassContent',
         Grade: cdCurrentGrade,
         Weekly_Goal: weeklyGoal,
         Plan: plan,
@@ -1748,7 +1787,7 @@
 
     try {
       const params = new URLSearchParams({
-        action: 'saveSeasonStatus',
+        key: TEACHER_KEY, action: 'saveSeasonStatus',
         Week: week,
         World: world,
         Boss_Battle: bossBattle
@@ -1823,7 +1862,7 @@
 
     try {
       const params = new URLSearchParams({
-        action: 'savePeriodGradeMap',
+        key: TEACHER_KEY, action: 'savePeriodGradeMap',
         Map: JSON.stringify(newMap)
       });
       const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
@@ -1987,7 +2026,7 @@
 
     try {
       const params = new URLSearchParams({
-        action: 'saveRosterEntry',
+        key: TEACHER_KEY, action: 'saveRosterEntry',
         OASIS_ID: oasisId,
         GamerTag: student.GamerTag,
         Real_Name: realName,
