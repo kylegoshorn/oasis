@@ -1099,13 +1099,31 @@
       if (result.success) {
         showToast(`// ${delta > 0 ? '+' : ''}${delta} XP applied`);
         input.value = '';
-        loadAllData();
+        // Patch the student's data locally instead of reloading the entire dashboard —
+        // avoids a slow full re-fetch just to reflect one student's change.
+        const student = allStudents.find(s => s.OASIS_ID === oasisId);
+        if (student) {
+          const newXP = (Number(student.Current_XP) || 0) + delta;
+          student.Current_XP = newXP;
+          student.Current_Level = calculateLevelLocal(newXP);
+        }
+        renderStudents();
+        renderStats();
       } else {
         showToast('// ' + (result.error || 'Update failed'), true);
       }
     } catch (e) {
       showToast('// Connection error', true);
     }
+  }
+
+  // Mirrors the tiered Level curve used on the backend — keeps the dashboard's local
+  // patch-update in sync with the real calculateLevel() logic in Code.gs.
+  function calculateLevelLocal(xp) {
+    if (xp <= 225) return 1 + Math.floor(xp / 45);
+    else if (xp <= 525) return 6 + Math.floor((xp - 225) / 50);
+    else if (xp <= 850) return 12 + Math.floor((xp - 525) / 65);
+    else return 17 + Math.floor((xp - 850) / 80);
   }
 
   // ── ACTIONS: KEYS ──
@@ -1116,7 +1134,9 @@
       const result = await res.json();
       if (result.success) {
         showToast(`// ${keyName.replace('_',' ')} ${newValue ? 'awarded' : 'removed'}`);
-        loadAllData();
+        const student = allStudents.find(s => s.OASIS_ID === oasisId);
+        if (student) student[keyName] = newValue;
+        renderStudents();
       } else {
         showToast('// ' + (result.error || 'Update failed'), true);
       }
@@ -1190,7 +1210,14 @@
       if (result.success) {
         showToast(`// 🏆 ${achievementType.replace(/_/g,' ')} awarded!`);
         sel.value = '';
-        loadAllData();
+        const student = allStudents.find(s => s.OASIS_ID === oasisId);
+        if (student) {
+          const newXP = (Number(student.Current_XP) || 0) + 50; // Weekly Awards = +50 XP
+          student.Current_XP = newXP;
+          student.Current_Level = calculateLevelLocal(newXP);
+        }
+        renderStudents();
+        renderStats();
       } else {
         showToast('// ' + (result.error || 'Award failed'), true);
       }
