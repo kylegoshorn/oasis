@@ -272,9 +272,19 @@
 
   /* ── RIGHT SIDE: STACKED PANELS ── */
   /* ── RIGHT SIDE: 4 STACKED PANELS ── */
+  .left-stack {
+    display: grid;
+    grid-template-rows: 1.4fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .left-stack .panel { background: rgba(10,10,15,0.75); }
+
   .right-stack {
     display: grid;
-    grid-template-rows: 2fr 1fr 0.6fr 0.6fr;
+    grid-template-rows: 1fr 0.8fr 0.8fr;
     gap: 1px;
     background: var(--border);
     overflow: hidden;
@@ -481,16 +491,14 @@
   <!-- MAIN GRID -->
   <div class="display-grid">
 
-    <!-- LEFT: LEADERBOARD (full height) -->
-    <div class="panel">
-      <div class="panel-title">🏆 Live Leaderboard</div>
-      <div class="lb-list" id="lbList">
-        <p class="empty-note">// Loading...</p>
+    <!-- LEFT: INDIVIDUAL LEADERBOARD + CLASS COMPETITION STACKED -->
+    <div class="left-stack">
+      <div class="panel">
+        <div class="panel-title">🏆 Live Leaderboard</div>
+        <div class="lb-list" id="lbList">
+          <p class="empty-note">// Loading...</p>
+        </div>
       </div>
-    </div>
-
-    <!-- RIGHT: CLASS COMP, PLAN, SUCCESS, WEEKLY GOAL -->
-    <div class="right-stack">
 
       <div class="panel">
         <div class="panel-title">📊 Class Competition</div>
@@ -498,6 +506,10 @@
           <p class="empty-note">// Loading...</p>
         </div>
       </div>
+    </div>
+
+    <!-- RIGHT: PLAN, SUCCESS, STANDARDS -->
+    <div class="right-stack">
 
       <div class="panel">
         <div class="panel-title">📋 Today's Plan</div>
@@ -736,6 +748,48 @@
       standardsList.innerHTML = '<li class="empty-note">// Could not load</li>';
     }
   }
+
+  // ── AUTO-SCROLL for overflowing panels ──
+  // Slowly scrolls any panel list that's taller than its container, pauses at the bottom, then resets to top.
+  const autoScrollState = new Map(); // element -> {direction, lastTime}
+
+  function autoScrollTick(timestamp) {
+    const ids = ['lbList', 'compList', 'planList', 'successList', 'standardsList'];
+    ids.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const maxScroll = el.scrollHeight - el.clientHeight;
+      if (maxScroll <= 4) {
+        el.scrollTop = 0; // nothing to scroll, keep it reset
+        return;
+      }
+
+      let state = autoScrollState.get(id);
+      if (!state) {
+        state = { direction: 1, lastTime: timestamp, pauseUntil: 0 };
+        autoScrollState.set(id, state);
+      }
+
+      if (timestamp < state.pauseUntil) return; // currently pausing at top or bottom
+
+      const elapsed = timestamp - state.lastTime;
+      state.lastTime = timestamp;
+      const pixelsPerMs = 0.025; // slow, readable scroll speed
+      el.scrollTop += state.direction * pixelsPerMs * elapsed;
+
+      if (el.scrollTop >= maxScroll - 1) {
+        el.scrollTop = maxScroll;
+        state.direction = -1;
+        state.pauseUntil = timestamp + 2500; // pause 2.5s at the bottom
+      } else if (el.scrollTop <= 1 && state.direction === -1) {
+        el.scrollTop = 0;
+        state.direction = 1;
+        state.pauseUntil = timestamp + 2500; // pause 2.5s at the top
+      }
+    });
+    requestAnimationFrame(autoScrollTick);
+  }
+  requestAnimationFrame(autoScrollTick);
 
   // ── INIT ──
   loadLeaderboard();

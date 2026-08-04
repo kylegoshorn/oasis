@@ -1636,6 +1636,31 @@
       </div>
     </section>
 
+    <!-- TOP 3 QUICK LEADERBOARD (Individual + Class) -->
+    <section style="padding:1.5rem 2rem;">
+      <div class="container">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+
+          <div>
+            <p class="section-eyebrow">// Top Questers</p>
+            <h3 style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.1rem;color:var(--white);margin-bottom:1rem;">🏆 Top 3 Individual</h3>
+            <div id="homeTop3Individual" style="display:flex;flex-direction:column;gap:0.6rem;">
+              <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Loading...</p>
+            </div>
+          </div>
+
+          <div>
+            <p class="section-eyebrow">// Top Classes</p>
+            <h3 style="font-family:'Orbitron',sans-serif;font-weight:900;font-size:1.1rem;color:var(--white);margin-bottom:1rem;">🏆 Top 3 Class Periods</h3>
+            <div id="homeTop3Class" style="display:flex;flex-direction:column;gap:0.6rem;">
+              <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Loading...</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- BOSS BATTLE REVEAL (auto-shows on Weeks 3, 6, 9) -->
     <section id="bossRevealSection" style="padding:0 2rem 1.5rem; display:none;">
       <div class="container">
@@ -2761,6 +2786,49 @@
 
   // ── HOME TAB ──
   function renderHomeTab(students, classes, achievements) {
+    // Top 3 Individual Questers
+    const top3IndividualEl = document.getElementById('homeTop3Individual');
+    if (top3IndividualEl) {
+      const validStudents = (students || [])
+        .filter(s => s.GamerTag && s.GamerTag.trim() !== '')
+        .sort((a,b) => (Number(b.Current_XP)||0) - (Number(a.Current_XP)||0))
+        .slice(0, 3);
+      if (validStudents.length === 0) {
+        top3IndividualEl.innerHTML = `<p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// No questers yet</p>`;
+      } else {
+        const medals = ['🥇','🥈','🥉'];
+        top3IndividualEl.innerHTML = validStudents.map((s, i) => `
+          <div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;">
+            <span style="display:flex;align-items:center;gap:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--white);">
+              <span style="font-size:1.1rem;">${medals[i]}</span> ${escapeHtml(s.GamerTag)}
+            </span>
+            <span style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.85rem;color:var(--gold);">${(Number(s.Current_XP)||0).toLocaleString()} XP</span>
+          </div>`).join('');
+      }
+    }
+
+    // Top 3 Class Periods
+    const top3ClassEl = document.getElementById('homeTop3Class');
+    if (top3ClassEl) {
+      const validClassesForTop3 = (classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
+      if (validClassesForTop3.length === 0) {
+        top3ClassEl.innerHTML = `<p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:var(--muted);">// Class data appears each Friday</p>`;
+      } else {
+        const scoredClasses = validClassesForTop3
+          .map(c => ({ ...c, avgXP: Number(c.Average_XP_Per_Student) || 0 }))
+          .sort((a,b) => b.avgXP - a.avgXP)
+          .slice(0, 3);
+        const medals = ['🥇','🥈','🥉'];
+        top3ClassEl.innerHTML = scoredClasses.map((c, i) => `
+          <div style="display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;">
+            <span style="display:flex;align-items:center;gap:0.6rem;font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--white);">
+              <span style="font-size:1.1rem;">${medals[i]}</span> Period ${c.Class_Period}
+            </span>
+            <span style="font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.85rem;color:var(--cyan);">${c.avgXP.toFixed(1)} avg XP</span>
+          </div>`).join('');
+      }
+    }
+
     // Weekly Champion — highest combined score class
     const validClasses = (classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
     const champion = document.getElementById('weeklyChampion');

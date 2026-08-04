@@ -511,9 +511,7 @@
     <button class="tab-btn active" data-tab="students" onclick="switchTab('students')">👥 Students</button>
     <button class="tab-btn" data-tab="awards" onclick="switchTab('awards')">🏆 Weekly Awards</button>
     <button class="tab-btn" data-tab="classes" onclick="switchTab('classes')">📊 Class Competition</button>
-    <button class="tab-btn" data-tab="assignments" onclick="switchTab('assignments'); loadAssignments();">📋 Assignments</button>
     <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements'); loadAnnouncement();">📢 Announcements</button>
-    <button class="tab-btn" data-tab="helpqueue" onclick="switchTab('helpqueue'); loadHelpRequests();">🆘 Help Queue</button>
     <button class="tab-btn" data-tab="roster" onclick="switchTab('roster'); startRosterRefresh();">🔐 Roster Bridge</button>
     <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings(); loadSeasonStatus();">⚙️ Settings</button>
     <button class="tab-btn" data-tab="classdisplay" onclick="switchTab('classdisplay'); loadClassDisplaySettings();">🖥️ Class Display</button>
@@ -668,105 +666,6 @@
     </div>
   </div>
 
-  <!-- ASSIGNMENTS TAB -->
-  <div class="tab-panel" id="tab-assignments">
-
-    <!-- NEW ASSIGNMENT FORM -->
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
-      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">📋 Post New Assignment</p>
-      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;">Students see this when they log into their dashboard, filtered by their grade level.</p>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
-        <div>
-          <label class="ab-label">Assignment Title</label>
-          <input type="text" class="search-input" id="asgTitle" placeholder="e.g. Digital Citizenship Quiz" style="width:100%;">
-        </div>
-        <div>
-          <label class="ab-label">Type</label>
-          <select class="filter-select" id="asgType" style="width:100%;">
-            <option value="Quest">⚔️ Quest</option>
-            <option value="Quiz">📝 Quiz</option>
-            <option value="Test">🧪 Test</option>
-            <option value="Project">🚀 Project</option>
-            <option value="Boss Battle">👾 Boss Battle</option>
-            <option value="Review">📖 Review</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem;">
-        <div>
-          <label class="ab-label">Grade Level</label>
-          <select class="filter-select" id="asgGrade" style="width:100%;">
-            <option value="All">All Grades</option>
-            <option value="6th">6th Grade</option>
-            <option value="7th">7th Grade</option>
-            <option value="8th">8th Grade</option>
-          </select>
-        </div>
-        <div>
-          <label class="ab-label">Due Date</label>
-          <input type="date" class="search-input" id="asgDue" style="width:100%;color:var(--white);">
-        </div>
-        <div>
-          <label class="ab-label">World</label>
-          <select class="filter-select" id="asgWorld" style="width:100%;">
-            <option value="World 1">World 1 — Digital Citizenship</option>
-            <option value="World 2">World 2 — Productivity Tools</option>
-            <option value="World 3">World 3 — Web Design</option>
-            <option value="World 4">World 4 — Programming</option>
-            <option value="World 5">World 5 — Innovation Project</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="margin-bottom:1rem;">
-        <label class="ab-label">Description (optional)</label>
-        <textarea class="search-input" id="asgDesc" placeholder="What should students know about this assignment?" style="width:100%;height:70px;resize:vertical;font-family:'Inter',sans-serif;line-height:1.5;"></textarea>
-      </div>
-
-      <div style="display:flex;gap:0.75rem;align-items:center;">
-        <button class="btn-mini" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="postAssignment()">📋 Post Assignment</button>
-        <span id="asgStatus" style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);"></span>
-      </div>
-    </div>
-
-    <!-- ASSIGNMENT FILTERS -->
-    <div class="toolbar" style="margin-bottom:1rem;">
-      <select class="filter-select" id="asgFilterGrade" onchange="renderAssignments()">
-        <option value="">All Grades</option>
-        <option value="6th">6th Grade</option>
-        <option value="7th">7th Grade</option>
-        <option value="8th">8th Grade</option>
-        <option value="All">All Grades (shown to everyone)</option>
-      </select>
-      <select class="filter-select" id="asgFilterType" onchange="renderAssignments()">
-        <option value="">All Types</option>
-        <option value="Quest">Quest</option>
-        <option value="Quiz">Quiz</option>
-        <option value="Test">Test</option>
-        <option value="Project">Project</option>
-        <option value="Boss Battle">Boss Battle</option>
-        <option value="Review">Review</option>
-      </select>
-    </div>
-
-    <!-- ASSIGNMENT LIST -->
-    <div class="student-table-wrap">
-      <div style="display:grid;grid-template-columns:2fr 0.8fr 0.8fr 1fr 100px;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--card2);font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border);">
-        <span>Assignment</span>
-        <span>Grade</span>
-        <span>Type</span>
-        <span>Due Date</span>
-        <span>Actions</span>
-      </div>
-      <div id="assignmentList">
-        <div class="empty-state">// Loading assignments...</div>
-      </div>
-    </div>
-
-  </div>
-
   <!-- ANNOUNCEMENTS TAB -->
   <div class="tab-panel" id="tab-announcements">
 
@@ -817,30 +716,6 @@
       </div>
     </div>
 
-  </div>
-
-  <!-- HELP QUEUE TAB -->
-  <div class="tab-panel" id="tab-helpqueue">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;">
-      <div>
-        <p style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.2rem;">🆘 Anonymous Help Queue</p>
-        <p style="font-size:0.75rem;color:var(--muted);">Students send these from their dashboard when they need help. You can see who asked, which assignment, and exactly what they're struggling with.</p>
-      </div>
-      <button class="refresh-btn" onclick="loadHelpRequests()">⟲ Refresh</button>
-    </div>
-
-    <div class="student-table-wrap">
-      <div style="display:grid;grid-template-columns:0.7fr 0.6fr 1.6fr 0.5fr 80px;align-items:center;gap:0.75rem;padding:0.75rem 1rem;background:var(--card2);font-family:'JetBrains Mono',monospace;font-size:0.62rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;border-bottom:1px solid var(--border);">
-        <span>Assignment</span>
-        <span>Student</span>
-        <span>What They're Struggling With</span>
-        <span>Date</span>
-        <span>Action</span>
-      </div>
-      <div id="helpQueueList">
-        <div class="empty-state">// Loading help requests...</div>
-      </div>
-    </div>
   </div>
 
   <!-- ROSTER BRIDGE TAB -->
@@ -1397,7 +1272,7 @@
 
     let successCount = 0;
     let failCount = 0;
-    const BATCH_SIZE = 5; // send a handful at a time to avoid overwhelming Apps Script
+    const BATCH_SIZE = 15; // backend is now optimized (batched setValues + fast lookup), so larger batches are safe
 
     for (let i = 0; i < targets.length; i += BATCH_SIZE) {
       const batch = targets.slice(i, i + BATCH_SIZE);
@@ -1417,7 +1292,7 @@
 
       // Small pause between batches to further ease load on Apps Script
       if (i + BATCH_SIZE < targets.length) {
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 150));
       }
     }
 
