@@ -513,7 +513,7 @@
     <button class="tab-btn" data-tab="classes" onclick="switchTab('classes')">📊 Class Competition</button>
     <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements'); loadAnnouncement();">📢 Announcements</button>
     <button class="tab-btn" data-tab="roster" onclick="switchTab('roster'); startRosterRefresh();">🔐 Roster Bridge</button>
-    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings(); loadSeasonStatus();">⚙️ Settings</button>
+    <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings(); loadSeasonStatus(); loadRegistrationLockStatus();">⚙️ Settings</button>
     <button class="tab-btn" data-tab="classdisplay" onclick="switchTab('classdisplay'); loadClassDisplaySettings();">🖥️ Class Display</button>
   </div>
 
@@ -776,6 +776,17 @@
 
   <!-- SETTINGS TAB -->
   <div class="tab-panel" id="tab-settings">
+
+    <!-- REGISTRATION LOCK -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
+      <p style="font-family:'Orbitron',sans-serif;font-size:0.82rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">🔒 Registration Lock</p>
+      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6;">When locked, students can no longer create new GamerTags/avatars — they'll be told to log in with their existing one instead. Turn this on once your rosters are set to stop students from accidentally making duplicate characters.</p>
+
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <span id="regLockStatus" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);">// Checking status...</span>
+        <button class="btn-mini" id="regLockToggleBtn" style="padding:0.6rem 1.5rem;font-size:0.72rem;" onclick="toggleRegistrationLockUI()">// Loading...</button>
+      </div>
+    </div>
 
     <!-- SEASON STATUS -->
     <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem;">
@@ -1664,6 +1675,60 @@
   }
 
   // ── SEASON STATUS ──
+  // ── REGISTRATION LOCK ──
+  let currentRegLockState = false;
+
+  async function loadRegistrationLockStatus() {
+    const statusEl = document.getElementById('regLockStatus');
+    const btnEl = document.getElementById('regLockToggleBtn');
+    try {
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getRegistrationStatus`);
+      const data = await res.json();
+      currentRegLockState = !!data.locked;
+      renderRegLockUI();
+    } catch (e) {
+      if (statusEl) statusEl.textContent = '// Could not check status';
+      if (btnEl) btnEl.textContent = '// Retry';
+    }
+  }
+
+  function renderRegLockUI() {
+    const statusEl = document.getElementById('regLockStatus');
+    const btnEl = document.getElementById('regLockToggleBtn');
+    if (!statusEl || !btnEl) return;
+    if (currentRegLockState) {
+      statusEl.textContent = '🔒 Registration is currently LOCKED — no new characters can be created.';
+      statusEl.style.color = 'var(--red)';
+      btnEl.textContent = '🔓 Unlock Registration';
+    } else {
+      statusEl.textContent = '🔓 Registration is currently OPEN — students can still create new characters.';
+      statusEl.style.color = 'var(--green)';
+      btnEl.textContent = '🔒 Lock Registration';
+    }
+  }
+
+  async function toggleRegistrationLockUI() {
+    const newState = !currentRegLockState;
+    const btnEl = document.getElementById('regLockToggleBtn');
+    btnEl.textContent = '// Saving...';
+    try {
+      const params = new URLSearchParams({ key: TEACHER_KEY, action: 'toggleRegistrationLock', locked: newState });
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const result = await res.json();
+      if (result.success) {
+        currentRegLockState = newState;
+        renderRegLockUI();
+        showToast(`// Registration ${newState ? 'LOCKED' : 'UNLOCKED'}`);
+      } else {
+        showToast('// ' + (result.error || 'Failed to update'), true);
+        renderRegLockUI();
+      }
+    } catch (e) {
+      showToast('// Connection error', true);
+      renderRegLockUI();
+    }
+  }
+
   async function loadSeasonStatus() {
     const msg = document.getElementById('seasonStatusMsg');
     try {
