@@ -2257,7 +2257,7 @@
 
 <script>
   // ── CONFIG ──
-  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhj2nHwrLTTmt5QIMNG1OGLQ90i5JQPc-s7TiAsaFOt5xqY0zHyO3SnupDjsdVkN1C_Q/exec';
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzZoxXM2Fi9CP6IMOQvtmfg1JlaKD-Sfx23SbSnxnIBKk1OjxcEWVmtwBI5-C5QySGmoA/exec';
 
   // Map class codes -> Class_Period values in the sheet. Update each season.
   const CLASS_CODES = {
@@ -2606,13 +2606,13 @@
   async function loadOASISData() {
     let liveClasses = [];
     try {
-      const res = await fetch(APPS_SCRIPT_URL);
+      const res = await fetch(APPS_SCRIPT_URL, { redirect: 'follow' });
       const data = await res.json();
       renderLeaderboard(data.students || []);
 
       // Fetch live class competition data once, reuse for both the Classes tab and Home tab champion
       try {
-        const compRes = await fetch(`${APPS_SCRIPT_URL}?action=getClassCompetition`);
+        const compRes = await fetch(`${APPS_SCRIPT_URL}?action=getClassCompetition`, { redirect: 'follow' });
         const compData = await compRes.json();
         liveClasses = compData.classes || [];
       } catch(e) {
@@ -2634,7 +2634,7 @@
 
     // Load season status (week, current world, next boss battle)
     try {
-      const res2 = await fetch(`${APPS_SCRIPT_URL}?action=getSeasonStatus`);
+      const res2 = await fetch(`${APPS_SCRIPT_URL}?action=getSeasonStatus`, { redirect: 'follow' });
       const data2 = await res2.json();
       const s = data2.status || {};
       const weekEl = document.getElementById('statWeek');
@@ -2891,7 +2891,7 @@
 
   async function loadPeriodGradeMap() {
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getPeriodGradeMap`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getPeriodGradeMap`, { redirect: 'follow' });
       const data = await res.json();
       if (data.map && Object.keys(data.map).length > 0) {
         periodGradeMap = data.map;
@@ -2924,7 +2924,7 @@
         Avatar_String: avatarString,
         Season: 'Fall_2026'
       });
-      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       closeAvatar();
       alert(`⚡ Welcome to the OASIS, ${tag}!\n\nYour identity has been registered to Period ${period}. You will appear on the leaderboard after your first quest.`);
       loadOASISData();
@@ -2954,7 +2954,7 @@
 
   async function loadDashAnnouncement() {
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAnnouncement`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAnnouncement`, { redirect: 'follow' });
       const data = await res.json();
       const a = data.announcement;
       const banner = document.getElementById('dashAnnouncementBanner');
@@ -2979,7 +2979,7 @@
   async function loadStudentAssignments(grade) {
     const el = document.getElementById('dashAssignments');
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAssignments`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAssignments`, { redirect: 'follow' });
       const data = await res.json();
       const all = (data.assignments || []).filter(a => {
         if (!a.Grade || a.Grade === 'All') return true;
@@ -3060,7 +3060,7 @@
     errEl.textContent = '// Searching the OASIS...';
 
     try {
-      const res = await fetch(APPS_SCRIPT_URL);
+      const res = await fetch(APPS_SCRIPT_URL, { redirect: 'follow' });
       const data = await res.json();
       const students = data.students || [];
 
@@ -3263,7 +3263,7 @@
         Comment: comment,
         Date: new Date().toISOString().split('T')[0]
       });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         status.textContent = '✅ Your question has been sent! Your teacher will see it soon.';

@@ -648,7 +648,7 @@
     const lbList = document.getElementById('lbList');
     const compList = document.getElementById('compList');
     try {
-      const res = await fetch(APPS_SCRIPT_URL);
+      const res = await fetch(APPS_SCRIPT_URL, { redirect: 'follow' });
       const data = await res.json();
 
       // Leaderboard
@@ -679,7 +679,7 @@
 
     // Class Competition — live-calculated average XP per period
     try {
-      const compRes = await fetch(`${APPS_SCRIPT_URL}?action=getClassCompetition`);
+      const compRes = await fetch(`${APPS_SCRIPT_URL}?action=getClassCompetition`, { redirect: 'follow' });
       const compData = await compRes.json();
       const validClasses = (compData.classes || []).filter(c => c.Class_Period && String(c.Class_Period).trim() !== '');
 
@@ -717,7 +717,7 @@
     standardsList.innerHTML = '<li class="empty-note">// Loading...</li>';
 
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getClassContent&Grade=${currentGrade}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getClassContent&Grade=${currentGrade}`, { redirect: 'follow' });
       const data = await res.json();
       const c = data.content || {};
 

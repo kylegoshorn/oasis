@@ -938,8 +938,8 @@
     try {
       // Load student data and roster in parallel
       const [dataRes, rosterRes] = await Promise.all([
-        fetch(APPS_SCRIPT_URL),
-        fetch(`${APPS_SCRIPT_URL}?action=getRoster`)
+        fetch(APPS_SCRIPT_URL, { redirect: 'follow' }),
+        fetch(`${APPS_SCRIPT_URL}?action=getRoster`, { redirect: 'follow' })
       ]);
       const data       = await dataRes.json();
       const rosterData = await rosterRes.json();
@@ -1105,7 +1105,7 @@
 
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action: 'updateXP', OASIS_ID: oasisId, Delta: delta });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         showToast(`// ${delta > 0 ? '+' : ''}${delta} XP applied`);
@@ -1141,7 +1141,7 @@
   async function toggleKey(oasisId, keyName, newValue) {
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action: 'toggleKey', OASIS_ID: oasisId, Key: keyName, Value: newValue });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         showToast(`// ${keyName.replace('_',' ')} ${newValue ? 'awarded' : 'removed'}`);
@@ -1216,7 +1216,7 @@
         Achievement_Type: achievementType,
         Season: 'Fall_2026'
       });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         showToast(`// 🏆 ${achievementType.replace(/_/g,' ')} awarded!`);
@@ -1319,7 +1319,7 @@
       await Promise.all(batch.map(async s => {
         try {
           const params = new URLSearchParams({ key: TEACHER_KEY, action: 'updateXP', OASIS_ID: s.OASIS_ID, Delta: amount });
-          const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+          const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
           const result = await res.json();
           if (result.success) successCount++;
           else failCount++;
@@ -1367,7 +1367,7 @@
   async function loadAssignments() {
     document.getElementById('assignmentList').innerHTML = '<div class="empty-state">// Loading assignments...</div>';
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAssignments`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAssignments`, { redirect: 'follow' });
       const data = await res.json();
       allAssignments = data.assignments || [];
       renderAssignments();
@@ -1437,7 +1437,7 @@
     try {
       const id = 'ASG-' + Date.now();
       const params = new URLSearchParams({ key: TEACHER_KEY, action:'saveAssignment', ID:id, Title:title, Type:type, Grade:grade, Due_Date:due, World:world, Description:desc, Season:'Fall_2026' });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         showToast(`// ✅ "${title}" posted`);
@@ -1459,7 +1459,7 @@
     if (!id || !confirm('Delete this assignment?')) return;
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action:'deleteAssignment', ID:id });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) { showToast('// Assignment deleted'); loadAssignments(); }
       else showToast('// ' + (result.error||'Delete failed'), true);
@@ -1475,7 +1475,7 @@
 
   async function loadAnnouncement() {
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAnnouncement`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAnnouncement`, { redirect: 'follow' });
       const data = await res.json();
       currentAnnouncement = data.announcement || null;
       renderAnnouncementPreview();
@@ -1504,7 +1504,7 @@
     status.textContent = '// Posting...';
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action:'saveAnnouncement', Text:text, Label:label, Type:type, Date:new Date().toISOString().split('T')[0] });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         showToast('// 📢 Announcement posted!');
@@ -1525,7 +1525,7 @@
     if (!confirm('Clear the current announcement banner?')) return;
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action:'saveAnnouncement', Text:'', Label:'', Type:'info', Date:'' });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) { showToast('// Banner cleared'); currentAnnouncement = null; renderAnnouncementPreview(); }
     } catch (e) { showToast('// Connection error', true); }
@@ -1536,7 +1536,7 @@
     const list = document.getElementById('helpQueueList');
     list.innerHTML = '<div class="empty-state">// Loading...</div>';
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getHelpRequests`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getHelpRequests`, { redirect: 'follow' });
       const data = await res.json();
       const requests = (data.help_requests || []).filter(r => {
         const resolved = r.Resolved;
@@ -1582,7 +1582,7 @@
     btn.disabled = true;
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action:'resolveHelpRequest', ID:id });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) { showToast('// Help request resolved ✅'); loadHelpRequests(); }
       else { showToast('// ' + (result.error||'Failed'), true); btn.textContent = '✅ Resolve'; btn.disabled = false; }
@@ -1617,7 +1617,7 @@
     const status = document.getElementById('classDisplayStatus');
     status.textContent = '// Loading...';
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAllClassContent`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getAllClassContent`, { redirect: 'follow' });
       const data = await res.json();
       cdCache = data.content_by_grade || {};
     } catch(e) {
@@ -1657,7 +1657,7 @@
         Standards: standards,
         Checklist: checklist
       });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         cdCache[cdCurrentGrade] = { Weekly_Goal: weeklyGoal, Plan: plan, Success_Criteria: success, Standards: standards, Checklist: checklist };
@@ -1682,7 +1682,7 @@
     const statusEl = document.getElementById('regLockStatus');
     const btnEl = document.getElementById('regLockToggleBtn');
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getRegistrationStatus`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getRegistrationStatus`, { redirect: 'follow' });
       const data = await res.json();
       currentRegLockState = !!data.locked;
       renderRegLockUI();
@@ -1713,7 +1713,7 @@
     btnEl.textContent = '// Saving...';
     try {
       const params = new URLSearchParams({ key: TEACHER_KEY, action: 'toggleRegistrationLock', locked: newState });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         currentRegLockState = newState;
@@ -1732,7 +1732,7 @@
   async function loadSeasonStatus() {
     const msg = document.getElementById('seasonStatusMsg');
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getSeasonStatus`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getSeasonStatus`, { redirect: 'follow' });
       const data = await res.json();
       const s = data.status || {};
       if (s.Week) document.getElementById('seasonWeek').value = s.Week;
@@ -1759,7 +1759,7 @@
         World: world,
         Boss_Battle: bossBattle
       });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         msg.textContent = '// ✅ Season status updated — live on student site now';
@@ -1783,7 +1783,7 @@
     grid.innerHTML = '<p style="font-family:\'JetBrains Mono\',monospace;font-size:0.72rem;color:var(--muted);grid-column:1/-1;">// Loading...</p>';
 
     try {
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getPeriodGradeMap`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getPeriodGradeMap`, { redirect: 'follow' });
       const data = await res.json();
       if (data.map && Object.keys(data.map).length > 0) {
         currentPeriodGradeMap = data.map;
@@ -1832,7 +1832,7 @@
         key: TEACHER_KEY, action: 'savePeriodGradeMap',
         Map: JSON.stringify(newMap)
       });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
       if (result.success) {
         currentPeriodGradeMap = newMap;
@@ -1865,7 +1865,7 @@
       }
 
       // Load existing roster mappings from private sheet
-      const res = await fetch(`${APPS_SCRIPT_URL}?action=getRoster`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?action=getRoster`, { redirect: 'follow' });
       const data = await res.json();
       if (data.roster) {
         rosterData = {};
@@ -2000,7 +2000,7 @@
         Class_Period: student.Class_Period,
         Season: 'Fall_2026'
       });
-      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`);
+      const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
       const result = await res.json();
 
       if (result.success) {
