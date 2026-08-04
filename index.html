@@ -2669,6 +2669,18 @@
     }
   }
 
+  // Safely escapes HTML special characters so student-entered text (like GamerTags)
+  // can never break page structure or inject unwanted markup.
+  function escapeHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   function renderLeaderboard(students) {
     const lbBody = document.getElementById('lbBody');
 
