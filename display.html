@@ -508,14 +508,14 @@
       </div>
     </div>
 
-    <!-- RIGHT: PLAN, SUCCESS, STANDARDS -->
+    <!-- RIGHT: BELL WORK, SUCCESS, STANDARDS -->
     <div class="right-stack">
 
       <div class="panel">
-        <div class="panel-title">📋 Today's Plan</div>
-        <ol class="plan-list" id="planList" style="padding:0;">
-          <li class="empty-note">// No plan posted yet</li>
-        </ol>
+        <div class="panel-title">🔔 Bell Work Question</div>
+        <div id="bellWorkQuestion" style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;color:var(--white);line-height:1.5;padding:0.5rem 0;overflow-y:auto;max-height:100%;flex:1;">
+          <span class="empty-note">// No Bell Work question posted yet</span>
+        </div>
       </div>
 
       <div class="panel">
@@ -706,13 +706,13 @@
     }
   }
 
-  // ── CLASS CONTENT (Plan, Success, Standards) ──
+  // ── CLASS CONTENT (Bell Work, Success, Standards) ──
   async function loadClassContent() {
-    const planList = document.getElementById('planList');
+    const bellWorkEl = document.getElementById('bellWorkQuestion');
     const successList = document.getElementById('successList');
     const standardsList = document.getElementById('standardsList');
 
-    planList.innerHTML = '<li class="empty-note">// Loading...</li>';
+    bellWorkEl.innerHTML = '<span class="empty-note">// Loading...</span>';
     successList.innerHTML = '<li class="empty-note">// Loading...</li>';
     standardsList.innerHTML = '<li class="empty-note">// Loading...</li>';
 
@@ -721,10 +721,12 @@
       const data = await res.json();
       const c = data.content || {};
 
-      const planItems = (c.Plan || '').split('|').map(s => s.trim()).filter(Boolean);
-      planList.innerHTML = planItems.length
-        ? planItems.map((item, i) => `<li class="plan-item"><span class="plan-num">${i+1}.</span><span>${escapeHtml(item)}</span></li>`).join('')
-        : '<li class="empty-note">// No plan posted yet</li>';
+      // Bell Work Question reuses the "Plan" field from Class Content — update it from
+      // the Teacher Dashboard's Class Display tab, same as before, just displayed differently here.
+      const bellWorkText = (c.Plan || '').trim();
+      bellWorkEl.innerHTML = bellWorkText
+        ? escapeHtml(bellWorkText)
+        : '<span class="empty-note">// No Bell Work question posted yet</span>';
 
       const successItems = (c.Success_Criteria || '').split('|').map(s => s.trim()).filter(Boolean);
       successList.innerHTML = successItems.length
@@ -743,7 +745,7 @@
         : '<li class="empty-note">// No standards posted yet</li>';
 
     } catch(e) {
-      planList.innerHTML = '<li class="empty-note">// Could not load — check connection</li>';
+      bellWorkEl.innerHTML = '<span class="empty-note">// Could not load — check connection</span>';
       successList.innerHTML = '<li class="empty-note">// Could not load</li>';
       standardsList.innerHTML = '<li class="empty-note">// Could not load</li>';
     }
@@ -754,7 +756,7 @@
   const autoScrollState = new Map(); // element -> {direction, lastTime}
 
   function autoScrollTick(timestamp) {
-    const ids = ['lbList', 'compList', 'planList', 'successList', 'standardsList'];
+    const ids = ['lbList', 'compList', 'bellWorkQuestion', 'successList', 'standardsList'];
     ids.forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
