@@ -841,8 +841,8 @@
 
       <!-- TODAY'S PLAN -->
       <div style="margin-bottom:1.5rem;">
-        <label class="ab-label">📋 Today's Plan (one step per line)</label>
-        <textarea id="cdPlan" placeholder="Bell work&#10;Review yesterday's concept&#10;Guided practice&#10;Independent work time&#10;Exit ticket" style="width:100%;height:110px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.85rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
+        <label class="ab-label">🔔 Bell Work Question (shown on the Display screen)</label>
+        <textarea id="cdPlan" placeholder="What is the difference between hardware and software?" style="width:100%;height:110px;background:var(--black);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:0.75rem 1rem;color:var(--white);font-family:'Inter',sans-serif;font-size:0.85rem;line-height:1.6;outline:none;resize:vertical;"></textarea>
       </div>
 
       <!-- SUCCESS CRITERIA -->
@@ -1688,7 +1688,7 @@
   function renderClassDisplayForm() {
     const c = cdCache[cdCurrentGrade] || {};
     document.getElementById('cdWeeklyGoal').value = c.Weekly_Goal || '';
-    document.getElementById('cdPlan').value = (c.Plan || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
+    document.getElementById('cdPlan').value = c.Plan || '';
     document.getElementById('cdSuccess').value = (c.Success_Criteria || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
     document.getElementById('cdStandards').value = (c.Standards || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
     document.getElementById('cdChecklist').value = (c.Checklist || '').split('|').map(s=>s.trim()).filter(Boolean).join('\n');
@@ -1700,7 +1700,7 @@
     status.style.color = 'var(--muted)';
 
     const weeklyGoal = document.getElementById('cdWeeklyGoal').value.trim();
-    const plan = document.getElementById('cdPlan').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
+    const plan = document.getElementById('cdPlan').value.trim(); // Bell Work Question — saved as raw text, not a pipe-joined list
     const success = document.getElementById('cdSuccess').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
     const standards = document.getElementById('cdStandards').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
     const checklist = document.getElementById('cdChecklist').value.split('\n').map(s=>s.trim()).filter(Boolean).join('|');
