@@ -176,7 +176,7 @@
 
   .student-row {
     display: grid;
-    grid-template-columns: 44px 1.4fr 0.7fr 1fr 0.8fr 0.9fr 1.6fr;
+    grid-template-columns: 24px 44px 1.4fr 0.7fr 1fr 0.8fr 0.9fr 1.6fr;
     align-items: center;
     gap: 0.75rem;
     padding: 0.75rem 1rem;
@@ -510,7 +510,6 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="students" onclick="switchTab('students')">👥 Students</button>
     <button class="tab-btn" data-tab="awards" onclick="switchTab('awards')">🏆 Weekly Awards</button>
-    <button class="tab-btn" data-tab="classes" onclick="switchTab('classes')">📊 Class Competition</button>
     <button class="tab-btn" data-tab="announcements" onclick="switchTab('announcements'); loadAnnouncement();">📢 Announcements</button>
     <button class="tab-btn" data-tab="roster" onclick="switchTab('roster'); startRosterRefresh();">🔐 Roster Bridge</button>
     <button class="tab-btn" data-tab="settings" onclick="switchTab('settings'); loadPeriodGradeSettings(); loadSeasonStatus(); loadRegistrationLockStatus();">⚙️ Settings</button>
@@ -531,8 +530,18 @@
         <option value="6">Period 6</option>
       </select>
     </div>
+
+    <!-- BULK AWARD TO SELECTED STUDENTS -->
+    <div id="bulkSelectPanel" style="display:none;background:var(--card);border:1px solid var(--gold);border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <span id="selectedCountLabel" style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--gold);font-weight:700;">0 selected</span>
+      <input type="number" id="bulkSelectXpInput" placeholder="±XP" class="xp-input" style="width:90px;">
+      <button class="btn-mini" style="padding:0.6rem 1.25rem;font-size:0.72rem;" onclick="awardXPToSelected()">⚡ Award to Selected</button>
+      <button class="btn-mini" style="padding:0.6rem 1.25rem;font-size:0.72rem;background:transparent;border:1px solid var(--border);color:var(--muted);" onclick="clearSelection()">Clear Selection</button>
+    </div>
+
     <div class="student-table-wrap">
       <div class="student-row header-row">
+        <span><input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this.checked)" style="width:16px;height:16px;cursor:pointer;" title="Select All"></span>
         <span></span>
         <span>GamerTag</span>
         <span>Period</span>
@@ -617,54 +626,6 @@
     </div>
   </div>
 
-  <!-- CLASSES TAB -->
-  <div class="tab-panel" id="tab-classes">
-
-    <!-- CLASS XP AWARD PANEL -->
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:1.25rem;">
-      <p style="font-family:'Orbitron',sans-serif;font-size:0.78rem;font-weight:700;color:var(--gold);letter-spacing:0.08em;margin-bottom:0.25rem;">⚡ Award XP to Entire Class</p>
-      <p style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;">Give every student in a period a flat XP bonus — great for class-wide achievements like 100% completion or winning the weekly competition.</p>
-      <div style="display:flex;gap:0.75rem;flex-wrap:wrap;align-items:flex-end;">
-        <div>
-          <label style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">Class Period</label>
-          <select class="filter-select" id="classXpPeriod">
-            <option value="">Select period...</option>
-            <option value="1">Period 1</option>
-            <option value="2">Period 2</option>
-            <option value="3">Period 3</option>
-            <option value="4">Period 4</option>
-            <option value="5">Period 5</option>
-            <option value="6">Period 6</option>
-            <option value="ALL">All Periods</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">XP Amount</label>
-          <input type="number" class="search-input" id="classXpAmount" placeholder="e.g. 25" style="width:120px;">
-        </div>
-        <div>
-          <label style="font-family:'JetBrains Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;display:block;margin-bottom:0.4rem;">Reason (optional)</label>
-          <input type="text" class="search-input" id="classXpReason" placeholder="e.g. 100% completion" style="width:200px;">
-        </div>
-        <button class="btn-mini" style="padding:0.6rem 1.25rem;font-size:0.72rem;" onclick="awardClassXP()">⚡ Award to Class</button>
-      </div>
-      <div id="classXpPreview" style="margin-top:0.75rem;font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--muted);min-height:1.2em;"></div>
-    </div>
-
-    <!-- CLASS COMPETITION TABLE -->
-    <div class="class-comp-table">
-      <div class="class-comp-row header-row">
-        <span>Period</span>
-        <span>Total XP</span>
-        <span>Avg XP / Student</span>
-        <span>Completion Rate</span>
-        <span>Score</span>
-      </div>
-      <div id="classCompList">
-        <div class="empty-state">// Loading class data...</div>
-      </div>
-    </div>
-  </div>
 
   <!-- ANNOUNCEMENTS TAB -->
   <div class="tab-panel" id="tab-announcements">
@@ -1029,6 +990,7 @@
 
       return `
         <div class="student-row">
+          <div><input type="checkbox" class="student-select-checkbox" data-oasis-id="${id}" onchange="updateSelectedCount()" style="width:18px;height:18px;cursor:pointer;"></div>
           <div class="student-avatar-mini"><canvas width="34" height="34" data-avatar="${escapeAttr(s.Avatar_String||'')}"></canvas></div>
           <div class="student-name-cell">
             ${realName ? `<div class="tag">${escapeHtml(realName)}</div>` : ''}
@@ -1135,6 +1097,103 @@
     else if (xp <= 525) return 6 + Math.floor((xp - 225) / 50);
     else if (xp <= 850) return 12 + Math.floor((xp - 525) / 65);
     else return 17 + Math.floor((xp - 850) / 80);
+  }
+
+  // ── MULTI-SELECT: choose specific students, award XP to just them ──
+  function getSelectedOasisIds() {
+    return Array.from(document.querySelectorAll('.student-select-checkbox:checked'))
+      .map(cb => cb.dataset.oasisId);
+  }
+
+  function updateSelectedCount() {
+    const ids = getSelectedOasisIds();
+    const panel = document.getElementById('bulkSelectPanel');
+    const label = document.getElementById('selectedCountLabel');
+    if (ids.length > 0) {
+      panel.style.display = 'flex';
+      label.textContent = `${ids.length} selected`;
+    } else {
+      panel.style.display = 'none';
+    }
+    // Keep the header "Select All" checkbox in sync (checked only if every visible row is checked)
+    const allBoxes = document.querySelectorAll('.student-select-checkbox');
+    const selectAllBox = document.getElementById('selectAllCheckbox');
+    if (selectAllBox && allBoxes.length > 0) {
+      selectAllBox.checked = ids.length === allBoxes.length;
+    }
+  }
+
+  function toggleSelectAll(checked) {
+    document.querySelectorAll('.student-select-checkbox').forEach(cb => { cb.checked = checked; });
+    updateSelectedCount();
+  }
+
+  function clearSelection() {
+    document.querySelectorAll('.student-select-checkbox').forEach(cb => { cb.checked = false; });
+    const selectAllBox = document.getElementById('selectAllCheckbox');
+    if (selectAllBox) selectAllBox.checked = false;
+    document.getElementById('bulkSelectXpInput').value = '';
+    updateSelectedCount();
+  }
+
+  async function awardXPToSelected() {
+    const ids = getSelectedOasisIds();
+    if (ids.length === 0) { showToast('// No students selected', true); return; }
+
+    const input = document.getElementById('bulkSelectXpInput');
+    const delta = parseInt(input.value);
+    if (!delta || isNaN(delta)) { showToast('// Enter a valid XP amount', true); return; }
+
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.disabled = true;
+
+    let successCount = 0;
+    let failCount = 0;
+    const BATCH_SIZE = 15;
+
+    for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+      const batch = ids.slice(i, i + BATCH_SIZE);
+      btn.textContent = `// ${Math.min(i + BATCH_SIZE, ids.length)}/${ids.length}...`;
+
+      await Promise.all(batch.map(async oasisId => {
+        try {
+          const params = new URLSearchParams({ key: TEACHER_KEY, action: 'updateXP', OASIS_ID: oasisId, Delta: delta });
+          const res = await fetch(`${APPS_SCRIPT_URL}?${params.toString()}`, { redirect: 'follow' });
+          const result = await res.json();
+          if (result.success) {
+            successCount++;
+            const student = allStudents.find(s => s.OASIS_ID === oasisId);
+            if (student) {
+              const newXP = (Number(student.Current_XP) || 0) + delta;
+              student.Current_XP = newXP;
+              student.Current_Level = calculateLevelLocal(newXP);
+            }
+          } else {
+            failCount++;
+          }
+        } catch (e) {
+          failCount++;
+        }
+      }));
+
+      if (i + BATCH_SIZE < ids.length) {
+        await new Promise(r => setTimeout(r, 150));
+      }
+    }
+
+    btn.disabled = false;
+    btn.textContent = originalText;
+
+    if (failCount === 0) {
+      showToast(`// ⚡ ${delta > 0 ? '+' : ''}${delta} XP applied to ${successCount} students`);
+    } else {
+      showToast(`// ${successCount} succeeded, ${failCount} failed`, true);
+    }
+
+    renderStudents();
+    renderStats();
+    clearSelection();
   }
 
   // ── ACTIONS: KEYS ──
